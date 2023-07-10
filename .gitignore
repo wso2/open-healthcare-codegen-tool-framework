@@ -43,3 +43,6 @@ replay_pid*
 
 ### Mac OS ###
 .DS_Store
+
+# ignore target directories
+target/
