@@ -22,6 +22,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractTool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.ToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 
+/**
+ * Abstract class for implementing FHIR tools.
+ */
 public abstract class AbstractFHIRTool extends AbstractTool {
 
     @Override

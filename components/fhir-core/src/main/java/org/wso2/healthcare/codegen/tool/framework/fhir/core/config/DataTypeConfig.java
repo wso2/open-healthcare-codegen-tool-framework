@@ -24,6 +24,9 @@ import net.consensys.cava.toml.TomlTable;
 
 import java.util.Properties;
 
+/**
+ * Data type configuration.
+ */
 public class DataTypeConfig {
 
     private String name;

@@ -23,6 +23,9 @@ import net.consensys.cava.toml.TomlTable;
 
 import java.util.Properties;
 
+/**
+ * FHIR implementation guide related tool configs.
+ */
 public class IGConfig {
 
     private String name;

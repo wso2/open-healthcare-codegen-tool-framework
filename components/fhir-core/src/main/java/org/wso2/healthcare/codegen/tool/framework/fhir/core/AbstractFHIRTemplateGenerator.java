@@ -25,6 +25,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenExcep
 
 import java.util.Map;
 
+/**
+ * Abstract implementation of the FHIR artifact template generator.
+ */
 public abstract class AbstractFHIRTemplateGenerator extends AbstractTemplateGenerator {
 
     public AbstractFHIRTemplateGenerator(String templateResourcePath, String targetDir) throws CodeGenException {

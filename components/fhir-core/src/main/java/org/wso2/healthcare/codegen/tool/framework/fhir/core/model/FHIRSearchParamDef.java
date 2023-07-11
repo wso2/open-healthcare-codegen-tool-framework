@@ -25,6 +25,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class holds FHIR Search Parameter definition model.
+ */
 public class FHIRSearchParamDef implements SpecModel {
 
     private SearchParameter searchParameter;

@@ -23,6 +23,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractTool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.ToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 
+/**
+ * This class holds the abstract implementation of a HL7 tool.
+ */
 public class AbstractHL7Tool extends AbstractTool {
 
     @Override

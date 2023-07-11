@@ -24,6 +24,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData
 import org.wso2.healthcare.codegen.tool.framework.hl7.core.common.HL7SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.hl7.core.config.HL7ToolConfig;
 
+/**
+ * This class holds context information that are commonly available for all HL7 tool implementations.
+ */
 public class HL7ToolContext extends AbstractToolContext {
 
     private HL7ToolConfig config;

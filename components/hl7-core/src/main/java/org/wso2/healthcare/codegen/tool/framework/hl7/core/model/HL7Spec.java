@@ -21,6 +21,9 @@ package org.wso2.healthcare.codegen.tool.framework.hl7.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class holds all the parsed data for a specific version(i.e 2.3,2.4) of the HL7 specification.
+ */
 public class HL7Spec {
 
     private String version;

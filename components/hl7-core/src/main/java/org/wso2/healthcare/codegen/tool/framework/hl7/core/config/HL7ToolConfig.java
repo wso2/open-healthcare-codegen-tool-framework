@@ -29,6 +29,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.model.ConfigType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class holds common HL7 Tool configuration applicable to all the HL7 tools.
+ */
 public class HL7ToolConfig extends AbstractToolConfig {
 
     private final Map<String, HL7SpecSchemaConfig> schemaConfigMap = new HashMap<>();

@@ -20,6 +20,9 @@ package org.wso2.healthcare.codegen.tool.framework.hl7.core.config;
 
 import java.util.List;
 
+/**
+ * This class holds HL7 Spec Schema files related tool configurations.
+ */
 public class HL7SpecSchemaConfig {
 
     private String name;

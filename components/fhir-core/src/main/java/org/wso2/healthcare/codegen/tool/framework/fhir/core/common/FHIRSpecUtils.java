@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility functions on FHIR specification to use by FHIR tools.
+ */
 public class FHIRSpecUtils {
 
     private static final List<String>  defaultSkippedProperties = new ArrayList<>();

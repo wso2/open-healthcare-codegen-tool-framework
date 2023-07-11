@@ -24,6 +24,9 @@ import org.wso2.healthcare.codegen.tool.framework.hl7.core.model.HL7Spec;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class holds parsed HL7 Specification data and utilities.
+ */
 public class HL7SpecificationData implements SpecificationData {
 
     private static final HL7SpecificationData DATA_HOLDER_INSTANCE = new HL7SpecificationData();

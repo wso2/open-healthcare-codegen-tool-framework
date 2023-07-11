@@ -20,6 +20,9 @@ package org.wso2.healthcare.codegen.tool.framework.hl7.core.model;
 
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 
+/**
+ * This class holds spec data of a HL7 segment field.
+ */
 public class HL7FieldDef implements SpecModel {
 
     private String name;

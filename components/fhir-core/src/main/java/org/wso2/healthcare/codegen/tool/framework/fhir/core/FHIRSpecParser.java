@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * This class is responsible for parsing the FHIR specification files.
+ */
 public class FHIRSpecParser extends AbstractSpecParser {
 
     private static final FhirContext CTX = FhirContext.forR4();

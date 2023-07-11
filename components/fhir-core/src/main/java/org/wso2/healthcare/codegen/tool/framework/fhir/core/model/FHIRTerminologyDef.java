@@ -21,6 +21,9 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 import org.hl7.fhir.r4.model.Resource;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 
+/**
+ * This class holds FHIR Terminology definition model.
+ */
 public class FHIRTerminologyDef implements SpecModel {
 
     private String url;

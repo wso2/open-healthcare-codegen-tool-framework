@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class holds the FHIR resource definition.
+ */
 public class FHIRResourceDef implements SpecModel {
 
     private StructureDefinition definition;

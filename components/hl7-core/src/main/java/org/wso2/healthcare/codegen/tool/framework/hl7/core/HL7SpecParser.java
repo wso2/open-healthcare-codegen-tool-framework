@@ -36,6 +36,9 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * This class is responsible for parsing HL7 spec schema files.
+ */
 public class HL7SpecParser extends AbstractSpecParser {
 
     @Override

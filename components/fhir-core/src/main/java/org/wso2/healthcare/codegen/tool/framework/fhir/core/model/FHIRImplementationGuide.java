@@ -21,6 +21,9 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class holds data model for FHIR implementation guide related information.
+ */
 public class FHIRImplementationGuide {
     private String name;
     private Map<String, FHIRResourceDef> resources;

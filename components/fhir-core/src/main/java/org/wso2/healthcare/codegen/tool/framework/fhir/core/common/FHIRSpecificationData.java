@@ -29,6 +29,9 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Data holder for parsed FHIR specification data and utilities.
+ */
 public class FHIRSpecificationData implements SpecificationData {
 
     private static final FHIRSpecificationData DATA_HOLDER_INSTANCE = new FHIRSpecificationData();

@@ -28,6 +28,10 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecifica
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class represents the FHIR tool library which will hold the contexual data and utilities for the
+ * FHIR tool implementations to generate artifacts.
+ */
 public class FHIRTool extends AbstractTool {
 
     private FHIRToolContext toolContext;

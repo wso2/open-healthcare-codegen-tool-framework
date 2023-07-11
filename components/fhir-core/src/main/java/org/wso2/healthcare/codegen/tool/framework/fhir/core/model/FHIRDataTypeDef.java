@@ -28,6 +28,9 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
 import java.util.List;
 
+/**
+ * This class holds FHIR data type definition model for the FHIR tool lib.
+ */
 public class FHIRDataTypeDef implements SpecModel {
     //TODO: filter the data type elements with element.id, element.extension filtered out
     private StructureDefinition definition;

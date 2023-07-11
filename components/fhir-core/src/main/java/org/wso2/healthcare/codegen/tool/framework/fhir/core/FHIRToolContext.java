@@ -24,6 +24,9 @@ import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
 
+/**
+ * Context for FHIR tools.
+ */
 public class FHIRToolContext extends AbstractToolContext {
 
     private FHIRToolConfig config;
