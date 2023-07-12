@@ -55,7 +55,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
         for (String igName : igConfigs.keySet()) {
             IGConfig igConfig = igConfigs.get(igName);
-            File igDirPath = new File(igConfig.getDirPath());
+            File igDirPath = new File(toolConfig.getSpecBasePath() + igConfig.getDirPath());
             if (igDirPath.isDirectory()) {
                 File[] igProfileFiles = igDirPath.listFiles();
                 if (igProfileFiles != null) {
@@ -68,6 +68,9 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 fhirImplementationGuide);
                     }
                     for (File igProfileFile : igProfileFiles) {
+                        if (igProfileFile.isDirectory()) {
+                            continue;
+                        }
                         IBaseResource parsedDef;
                         try {
                             parsedDef = parseDefinition(igProfileFile);
@@ -132,7 +135,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
 
         List<String> terminologyDirs = ((FHIRToolConfig) toolConfig).getTerminologyDirs();
         for (String terminologyDir : terminologyDirs) {
-            File terminologyDirPath = new File(terminologyDir);
+            File terminologyDirPath = new File(toolConfig.getSpecBasePath() + terminologyDir);
             if (terminologyDirPath.isDirectory()) {
                 File[] terminologyFiles = terminologyDirPath.listFiles();
                 if (terminologyFiles != null) {
@@ -169,10 +172,10 @@ public class FHIRSpecParser extends AbstractSpecParser {
             }
         }
         FHIRSpecificationData.getDataHolderInstance().setTerminologies();
-        Map<String, Map<String,Coding>> codingMap = FHIRSpecificationData.getDataHolderInstance().getTerminologies();
+        Map<String, Map<String, Coding>> codingMap = FHIRSpecificationData.getDataHolderInstance().getTerminologies();
         List<String> dataTypeProfileDirs = ((FHIRToolConfig) toolConfig).getDataTypeProfileDirs();
         for (String dataTypeProfileDir : dataTypeProfileDirs) {
-            File dataTypeProfileDirPath = new File(dataTypeProfileDir);
+            File dataTypeProfileDirPath = new File(toolConfig.getSpecBasePath() + dataTypeProfileDir);
             if (dataTypeProfileDirPath.isDirectory()) {
                 File[] dataProfileFiles = dataTypeProfileDirPath.listFiles();
                 if (dataProfileFiles != null) {

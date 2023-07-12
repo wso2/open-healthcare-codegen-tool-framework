@@ -33,17 +33,17 @@ public abstract class AbstractTemplateGenerator implements TemplateGenerator {
     //target directory for the generated artifacts for the generator
     private String targetDir;
 
-    public AbstractTemplateGenerator(String templateResourcePath, String targetDir) throws CodeGenException {
+    public AbstractTemplateGenerator(String targetDir) throws CodeGenException {
         this.templateEngine = new TemplateEngine();
-        this.setTemplateResourcePath(templateResourcePath);
+        this.templateEngine.init();
         this.setTargetDir(targetDir);
         this.generatorProperties = new HashMap<>();
     }
 
-    public AbstractTemplateGenerator(String templateResourcePath, String targetDir,
+    public AbstractTemplateGenerator(String targetDir,
                                      Map<String, Object> generatorProperties) throws CodeGenException {
         this.templateEngine = new TemplateEngine();
-        this.setTemplateResourcePath(templateResourcePath);
+        this.templateEngine.init();
         this.setTargetDir(targetDir);
         this.generatorProperties = generatorProperties;
     }
@@ -64,6 +64,7 @@ public abstract class AbstractTemplateGenerator implements TemplateGenerator {
         templateEngine.setProperty(property, value);
     }
 
+    @Deprecated
     public void setTemplateResourcePath(String path) throws CodeGenException {
         templateEngine.setTemplateResourcePath(path);
     }

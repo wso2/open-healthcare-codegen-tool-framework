@@ -30,8 +30,8 @@ import java.util.Map;
  */
 public class AbstractHL7TemplateGenerator extends AbstractTemplateGenerator {
 
-    public AbstractHL7TemplateGenerator(String templateResourcePath, String targetDir) throws CodeGenException {
-        super(templateResourcePath, targetDir);
+    public AbstractHL7TemplateGenerator(String targetDir) throws CodeGenException {
+        super(targetDir);
     }
     @Override
     public void generate(TemplateEngine templateEngine, ToolContext toolContext,

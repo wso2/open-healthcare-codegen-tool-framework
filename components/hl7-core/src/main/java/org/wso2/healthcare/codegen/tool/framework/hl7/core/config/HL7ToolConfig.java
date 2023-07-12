@@ -19,6 +19,7 @@
 package org.wso2.healthcare.codegen.tool.framework.hl7.core.config;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang.StringUtils;
 import org.wso2.healthcare.codegen.tool.framework.commons.Constants;
@@ -61,6 +62,13 @@ public class HL7ToolConfig extends AbstractToolConfig {
                 }
             }
         }
+    }
+
+    @Override
+    public void overrideConfig(String jsonPath, JsonElement value) {
+
+        //override specific config in the execution time
+
     }
 
     public Map<String, HL7SpecSchemaConfig> getSchemaConfigMap() {

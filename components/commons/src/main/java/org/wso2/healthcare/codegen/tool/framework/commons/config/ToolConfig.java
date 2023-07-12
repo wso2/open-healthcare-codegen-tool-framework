@@ -18,6 +18,7 @@
 
 package org.wso2.healthcare.codegen.tool.framework.commons.config;
 
+import com.google.gson.JsonElement;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.ConfigType;
 
@@ -37,9 +38,9 @@ public interface ToolConfig {
     /**
      * Sets path to the config file directory.
      *
-     * @param configHomeDir config file directory
+     * @param resourceHomeDir config file directory
      */
-    void setConfigHomeDir(String configHomeDir);
+    void setResourceHomeDir(String resourceHomeDir);
 
     /**
      * Sets name of the tool.
@@ -61,4 +62,10 @@ public interface ToolConfig {
      * @param targetDir path to the target directory
      */
     void setTargetDir(String targetDir);
+    
+    public String getSpecBasePath();
+
+    public void setSpecBasePath(String specBasePath);
+
+    public void overrideConfig(String jsonPath, JsonElement value);
 }
