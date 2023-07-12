@@ -27,9 +27,10 @@ import java.util.Properties;
 public abstract class AbstractToolConfig implements ToolConfig {
     private ConfigType<?> configObj;
     private Properties properties = new Properties();
-    private String configHomeDir;
+    private String resourceHomeDir;
     private String targetDir;
     private String toolName;
+    private String specBasePath;
 
     public ConfigType<?> getConfigObj() {
         return configObj;
@@ -47,12 +48,14 @@ public abstract class AbstractToolConfig implements ToolConfig {
         this.properties = properties;
     }
 
-    public String getConfigHomeDir() {
-        return configHomeDir;
+    @Deprecated
+    public String getResourceHomeDir() {
+        return resourceHomeDir;
     }
 
-    public void setConfigHomeDir(String configHomeDir) {
-        this.configHomeDir = configHomeDir;
+    @Deprecated
+    public void setResourceHomeDir(String configHomeDir) {
+        this.resourceHomeDir = configHomeDir;
     }
 
     public String getTargetDir() {
@@ -69,5 +72,13 @@ public abstract class AbstractToolConfig implements ToolConfig {
 
     public void setToolName(String toolName) {
         this.toolName = toolName;
+    }
+
+    public String getSpecBasePath() {
+        return specBasePath == null ? "" : specBasePath;
+    }
+
+    public void setSpecBasePath(String specBasePath) {
+        this.specBasePath = specBasePath;
     }
 }

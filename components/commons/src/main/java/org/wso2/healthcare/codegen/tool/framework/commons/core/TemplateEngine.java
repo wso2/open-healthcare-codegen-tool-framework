@@ -20,6 +20,7 @@ package org.wso2.healthcare.codegen.tool.framework.commons.core;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 
 import java.io.FileWriter;
@@ -52,6 +53,8 @@ public class TemplateEngine {
 
     protected void init() throws CodeGenException {
         try {
+            this.velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+            this.velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
             velocityEngine.init();
         } catch (Exception e) {
             throw new CodeGenException("Error occurred while initializing template engine.", e);
@@ -59,20 +62,35 @@ public class TemplateEngine {
     }
 
     /**
-     * This is used to load the template resources from the provided path
+     * Used when executing the toll from the source code.
+     *
+     * @throws CodeGenException velocity engine init error.
+     */
+    protected void initForFileResourceLoader() throws CodeGenException {
+        try {
+            velocityEngine.init();
+        } catch (Exception e) {
+            throw new CodeGenException("Error occurred while initializing template engine.", e);
+        }
+    }
+
+    /**
+     * This is used to load the template resources from the provided path.
+     *
      * @param path resource path.
      */
+    @Deprecated
     public void setTemplateResourcePath(String path) throws CodeGenException {
         this.velocityEngine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, path);
-        this.init();
+        this.initForFileResourceLoader();
     }
 
     /**
      * Used to generate file based on template.
      *
-     * @param templateName name of the velocity template.
+     * @param templateName    name of the velocity template.
      * @param templateContext velocity context with included info
-     * @param fileName filename
+     * @param fileName        filename
      * @throws CodeGenException read/write error
      */
     public void generateOutputAsFile(String templateName, TemplateContext templateContext,
@@ -97,7 +115,7 @@ public class TemplateEngine {
      */
     public void createNestedDirectory(String nestedPath) throws CodeGenException {
 
-        Path pathFoSubFolder =  Paths.get(nestedPath);
+        Path pathFoSubFolder = Paths.get(nestedPath);
         try {
             if (!Files.exists(pathFoSubFolder)) {
                 Files.createDirectories(pathFoSubFolder);

@@ -30,12 +30,13 @@ import java.util.Map;
  */
 public abstract class AbstractFHIRTemplateGenerator extends AbstractTemplateGenerator {
 
-    public AbstractFHIRTemplateGenerator(String templateResourcePath, String targetDir) throws CodeGenException {
-        super(templateResourcePath, targetDir);
+    public AbstractFHIRTemplateGenerator(String targetDir) throws CodeGenException {
+        super(targetDir);
     }
 
     @Override
-    public void generate(TemplateEngine templateEngine, ToolContext toolContext, Map<String, Object> arguments) throws CodeGenException {
+    public void generate(TemplateEngine templateEngine, ToolContext toolContext, Map<String, Object> arguments)
+            throws CodeGenException {
         throw new CodeGenException("Concrete implementation for template generator cannot be found for: " +
                 toolContext.getConfig().getToolName());
     }

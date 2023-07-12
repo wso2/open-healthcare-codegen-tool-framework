@@ -24,6 +24,8 @@ import com.google.gson.JsonObject;
 import net.consensys.cava.toml.TomlArray;
 import net.consensys.cava.toml.TomlParseResult;
 import net.consensys.cava.toml.TomlTable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.healthcare.codegen.tool.framework.commons.Constants;
 import org.wso2.healthcare.codegen.tool.framework.commons.config.AbstractToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
@@ -40,6 +42,7 @@ import java.util.Map;
  */
 public class FHIRToolConfig extends AbstractToolConfig {
 
+    private static final Log LOG = LogFactory.getLog(FHIRToolConfig.class);
     private final Map<String, IGConfig> igConfigs = new HashMap<>();
     private final Map<String, DataTypeConfig> dataTypeConfigs = new HashMap<>();
     private final List<String> dataTypeProfileDirs = new ArrayList<>();
@@ -80,9 +83,9 @@ public class FHIRToolConfig extends AbstractToolConfig {
             }
         } else if (Constants.TOML_CONFIG_TYPE.equals(type)) {
             TomlParseResult tomlConfigObj = ((TomlConfigType) configObj.getConfigObj()).getConfigObj();
-            Object implementationGuides =  tomlConfigObj.get("implementation_guides");
+            Object implementationGuides = tomlConfigObj.get("implementation_guides");
             if (implementationGuides instanceof TomlArray) {
-                List<Object> implementationGuidesList = ((TomlArray)implementationGuides).toList();
+                List<Object> implementationGuidesList = ((TomlArray) implementationGuides).toList();
                 for (Object implementationGuide : implementationGuidesList) {
                     if (implementationGuide instanceof TomlTable) {
                         IGConfig igConfig = new IGConfig((TomlTable) implementationGuide);
@@ -101,22 +104,32 @@ public class FHIRToolConfig extends AbstractToolConfig {
                     }
                 }
             }
-            Object dataTypeProfiles =  tomlConfigObj.get("data_type_profiles");
+            Object dataTypeProfiles = tomlConfigObj.get("data_type_profiles");
             if (dataTypeProfiles instanceof TomlArray) {
                 List<Object> dataTypeProfileList = ((TomlArray) dataTypeProfiles).toList();
                 for (Object dataTypeProfile : dataTypeProfileList) {
-                    dataTypeProfileDirs.add(((TomlTable)dataTypeProfile).getString("dir_path"));
+                    dataTypeProfileDirs.add(((TomlTable) dataTypeProfile).getString("dir_path"));
                 }
             }
-            Object terminologies =  tomlConfigObj.get("data_type_profiles");
+            Object terminologies = tomlConfigObj.get("data_type_profiles");
             if (terminologies instanceof TomlArray) {
                 List<Object> terminologyList = ((TomlArray) terminologies).toList();
                 for (Object terminology : terminologyList) {
-                    terminologyDirs.add(((TomlTable)terminology).getString("dir_path"));
+                    terminologyDirs.add(((TomlTable) terminology).getString("dir_path"));
                 }
             }
         } else {
             throw new CodeGenException("Unsupported tool configuration format: " + type);
+        }
+    }
+
+    @Override
+    public void overrideConfig(String jsonPath, JsonElement value) {
+        if (jsonPath.equals("FHIRImplementationGuides")) {
+            IGConfig igConfig = new IGConfig(value.getAsJsonObject());
+            igConfigs.put(igConfig.getName(), igConfig);
+        } else {
+            LOG.warn("Invalid config path: " + jsonPath);
         }
     }
 
