@@ -62,10 +62,10 @@ public interface ToolConfig {
      * @param targetDir path to the target directory
      */
     void setTargetDir(String targetDir);
-    
-    public String getSpecBasePath();
 
-    public void setSpecBasePath(String specBasePath);
+    String getSpecBasePath();
 
-    public void overrideConfig(String jsonPath, JsonElement value);
+    void setSpecBasePath(String specBasePath);
+
+    void overrideConfig(String jsonPath, JsonElement value);
 }
