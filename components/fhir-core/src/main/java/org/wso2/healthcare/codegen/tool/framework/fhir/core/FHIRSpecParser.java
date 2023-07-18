@@ -37,6 +37,7 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -53,11 +54,13 @@ public class FHIRSpecParser extends AbstractSpecParser {
     @Override
     public void parse(ToolConfig toolConfig) {
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
+        // Create a FilenameFilter to filter JSON files
+        FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
         for (String igName : igConfigs.keySet()) {
             IGConfig igConfig = igConfigs.get(igName);
             File igDirPath = new File(igConfig.getDirPath());
             if (igDirPath.isDirectory()) {
-                File[] igProfileFiles = igDirPath.listFiles();
+                File[] igProfileFiles = igDirPath.listFiles(jsonFileFilter);
                 if (igProfileFiles != null) {
                     FHIRImplementationGuide fhirImplementationGuide =
                             FHIRSpecificationData.getDataHolderInstance().getFhirImplementationGuides().get(igName);
@@ -134,7 +137,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
         for (String terminologyDir : terminologyDirs) {
             File terminologyDirPath = new File(terminologyDir);
             if (terminologyDirPath.isDirectory()) {
-                File[] terminologyFiles = terminologyDirPath.listFiles();
+                File[] terminologyFiles = terminologyDirPath.listFiles(jsonFileFilter);
                 if (terminologyFiles != null) {
                     for (File terminologyFile : terminologyFiles) {
                         IBaseResource parsedDef;
@@ -174,7 +177,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
         for (String dataTypeProfileDir : dataTypeProfileDirs) {
             File dataTypeProfileDirPath = new File(dataTypeProfileDir);
             if (dataTypeProfileDirPath.isDirectory()) {
-                File[] dataProfileFiles = dataTypeProfileDirPath.listFiles();
+                File[] dataProfileFiles = dataTypeProfileDirPath.listFiles(jsonFileFilter);
                 if (dataProfileFiles != null) {
                     for (File dataProfileFile : dataProfileFiles) {
                         IBaseResource parsedDef;
