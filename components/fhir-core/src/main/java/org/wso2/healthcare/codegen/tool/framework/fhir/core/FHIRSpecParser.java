@@ -64,6 +64,8 @@ public class FHIRSpecParser extends AbstractSpecParser {
     public void parse(ToolConfig toolConfig) {
 
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
+        // Create a FilenameFilter to filter JSON files
+        FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
         for (String igName : igConfigs.keySet()) {
             parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath());
         }
