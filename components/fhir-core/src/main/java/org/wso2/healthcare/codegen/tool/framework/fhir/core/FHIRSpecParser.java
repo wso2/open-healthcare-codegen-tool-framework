@@ -238,7 +238,8 @@ public class FHIRSpecParser extends AbstractSpecParser {
                         fhirResourceDef.setParentResource(implementationGuide.getResources().get(parent));
                         break;
                     } else {
-                        LOG.error("Required implementation guide:" + igName + " is not loaded.");
+                        //todo: https://github.com/wso2-enterprise/open-healthcare/issues/1309
+                        LOG.debug("Required implementation guide:" + igName + " is not loaded.");
                     }
                 }
             }
@@ -247,7 +248,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
             if (implementationGuide != null) {
                 fhirResourceDef.setParentResource(implementationGuide.getResources().get(parent));
             } else {
-                LOG.error("Required implementation guide:" + igName + " is not loaded.");
+                LOG.debug("Required implementation guide:" + igName + " is not loaded.");
             }
         }
     }
