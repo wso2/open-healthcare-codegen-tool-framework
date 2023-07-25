@@ -20,6 +20,9 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,10 +37,13 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.IGConfig;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.*;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -71,7 +77,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 fhirImplementationGuide);
                     }
                     for (File igProfileFile : igProfileFiles) {
-                        if (igProfileFile.isDirectory()) {
+                        if (igProfileFile.isDirectory() || !isValidFHIRDefinition(igProfileFile)) {
                             continue;
                         }
                         IBaseResource parsedDef;
@@ -250,6 +256,22 @@ public class FHIRSpecParser extends AbstractSpecParser {
             } else {
                 LOG.debug("Required implementation guide:" + igName + " is not loaded.");
             }
+        }
+    }
+
+    /**
+     * This method will check whether the given file is a valid FHIR definition file.
+     *
+     * @param definitionFile definition file
+     * @return true if the file is a valid FHIR definition file, false otherwise
+     */
+    private boolean isValidFHIRDefinition(File definitionFile) {
+        try (FileReader fileReader = new FileReader(definitionFile)) {
+            JsonObject jsonObject = new Gson().fromJson(fileReader, JsonObject.class);
+            return jsonObject.has("resourceType");
+        } catch (IOException e) {
+            LOG.error("Error occurred while reading the definition file: " + definitionFile.getName(), e);
+            return false;
         }
     }
 }
