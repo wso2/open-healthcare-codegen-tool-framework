@@ -267,11 +267,13 @@ public class FHIRSpecParser extends AbstractSpecParser {
      */
     private boolean isValidFHIRDefinition(File definitionFile) {
         try (FileReader fileReader = new FileReader(definitionFile)) {
-            JsonObject jsonObject = new Gson().fromJson(fileReader, JsonObject.class);
-            return jsonObject.has("resourceType");
+            JsonElement jsonElement = new Gson().fromJson(fileReader, JsonElement.class);
+            if (!jsonElement.isJsonArray()){
+                return jsonElement.getAsJsonObject().has("resourceType");
+            }
         } catch (IOException e) {
             LOG.error("Error occurred while reading the definition file: " + definitionFile.getName(), e);
-            return false;
         }
+        return false;
     }
 }
