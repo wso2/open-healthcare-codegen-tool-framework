@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class FHIRImplementationGuide {
     private String name;
+    private String id;
     private Map<String, FHIRResourceDef> resources;
     private Map<String, FHIRSearchParamDef> searchParameters;
     private Map<String, FHIROperationDef> operations;
@@ -42,6 +43,14 @@ public class FHIRImplementationGuide {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Map<String, FHIRResourceDef> getResources() {

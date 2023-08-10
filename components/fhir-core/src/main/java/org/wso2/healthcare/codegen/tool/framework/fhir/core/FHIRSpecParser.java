@@ -133,6 +133,11 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 fhirTerminologyDef.setUrl(valueSet.getUrl());
                                 FHIRSpecificationData.getDataHolderInstance().addValueSet(fhirTerminologyDef.getUrl(),
                                         fhirTerminologyDef);
+                            } else if (parsedDef instanceof ImplementationGuide) {
+                                // overriding the FHIR implementation guide name if the ImplementationGuide resource json
+                                // file is available in the IG directory.
+                                fhirImplementationGuide.setName(((ImplementationGuide) parsedDef).getName());
+                                fhirImplementationGuide.setId(((ImplementationGuide) parsedDef).getId());
                             }
                         } catch (CodeGenException e) {
                             LOG.error("Error occurred while processing FHIR resource definition.", e);
