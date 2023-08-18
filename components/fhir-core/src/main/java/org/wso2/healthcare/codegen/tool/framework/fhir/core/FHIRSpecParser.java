@@ -63,88 +63,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
         // Create a FilenameFilter to filter JSON files
         FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
         for (String igName : igConfigs.keySet()) {
-            IGConfig igConfig = igConfigs.get(igName);
-            File igDirPath = new File(toolConfig.getSpecBasePath() + igConfig.getDirPath());
-            if (igDirPath.isDirectory()) {
-                File[] igProfileFiles = igDirPath.listFiles(jsonFileFilter);
-                if (igProfileFiles != null) {
-                    FHIRImplementationGuide fhirImplementationGuide =
-                            FHIRSpecificationData.getDataHolderInstance().getFhirImplementationGuides().get(igName);
-                    if (fhirImplementationGuide == null) {
-                        fhirImplementationGuide = new FHIRImplementationGuide();
-                        fhirImplementationGuide.setName(igName);
-                        FHIRSpecificationData.getDataHolderInstance().addFhirImplementationGuide(igName,
-                                fhirImplementationGuide);
-                    }
-                    for (File igProfileFile : igProfileFiles) {
-                        if (igProfileFile.isDirectory() || !isValidFHIRDefinition(igProfileFile)) {
-                            continue;
-                        }
-                        IBaseResource parsedDef;
-                        try {
-                            parsedDef = parseDefinition(igProfileFile);
-                            if (parsedDef instanceof StructureDefinition) {
-                                StructureDefinition structureDefinition = (StructureDefinition) parsedDef;
-                                String code = structureDefinition.getKind().toCode();
-                                if ("resource".equals(code)) {
-                                    FHIRResourceDef fhirResourceDef = new FHIRResourceDef();
-                                    fhirResourceDef.setDefinition(structureDefinition);
-                                    fhirResourceDef.setKind(DefKind.fromCode(code));
-                                    fhirImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
-                                            fhirResourceDef);
-                                }
-                            } else if (parsedDef instanceof SearchParameter) {
-                                SearchParameter searchParameter = (SearchParameter) parsedDef;
-                                FHIRSearchParamDef fhirSearchParamDef = new FHIRSearchParamDef();
-                                fhirSearchParamDef.setSearchParameter(searchParameter);
-                                fhirImplementationGuide.getSearchParameters().putIfAbsent(searchParameter.getUrl(),
-                                        fhirSearchParamDef);
-                            } else if (parsedDef instanceof Bundle) {
-                                //Bundled definitions
-                                Bundle definitions = (Bundle) parsedDef;
-                                for (Bundle.BundleEntryComponent entry : definitions.getEntry()) {
-                                    Resource fhirResourceEntry = entry.getResource();
-                                    if (fhirResourceEntry instanceof SearchParameter) {
-                                        //Bundled search parameters
-                                        SearchParameter searchParameter = (SearchParameter) fhirResourceEntry;
-                                        FHIRSearchParamDef fhirSearchParamDef = new FHIRSearchParamDef();
-                                        fhirSearchParamDef.setSearchParameter(searchParameter);
-                                        fhirImplementationGuide.getSearchParameters().putIfAbsent(
-                                                searchParameter.getUrl(), fhirSearchParamDef);
-                                    } else if (fhirResourceEntry instanceof OperationDefinition) {
-                                        //Bundled Operation Definitions
-                                        OperationDefinition operationDefinition = (OperationDefinition) fhirResourceEntry;
-                                        FHIROperationDef operationDef = new FHIROperationDef();
-                                        operationDef.setOperationDefinition(operationDefinition);
-                                        fhirImplementationGuide.getOperations().putIfAbsent(operationDefinition.getUrl(), operationDef);
-                                    }
-                                }
-                            } else if (parsedDef instanceof CodeSystem) {
-                                CodeSystem codeSystem = (CodeSystem) parsedDef;
-                                FHIRTerminologyDef fhirTerminologyDef = new FHIRTerminologyDef();
-                                fhirTerminologyDef.setTerminologyResource(codeSystem);
-                                fhirTerminologyDef.setUrl(codeSystem.getUrl());
-                                FHIRSpecificationData.getDataHolderInstance().addCodeSystem(fhirTerminologyDef.getUrl(),
-                                        fhirTerminologyDef);
-                            } else if (parsedDef instanceof ValueSet) {
-                                ValueSet valueSet = (ValueSet) parsedDef;
-                                FHIRTerminologyDef fhirTerminologyDef = new FHIRTerminologyDef();
-                                fhirTerminologyDef.setTerminologyResource(valueSet);
-                                fhirTerminologyDef.setUrl(valueSet.getUrl());
-                                FHIRSpecificationData.getDataHolderInstance().addValueSet(fhirTerminologyDef.getUrl(),
-                                        fhirTerminologyDef);
-                            } else if (parsedDef instanceof ImplementationGuide) {
-                                // overriding the FHIR implementation guide name if the ImplementationGuide resource json
-                                // file is available in the IG directory.
-                                fhirImplementationGuide.setName(((ImplementationGuide) parsedDef).getName());
-                                fhirImplementationGuide.setId(((ImplementationGuide) parsedDef).getId());
-                            }
-                        } catch (CodeGenException e) {
-                            LOG.error("Error occurred while processing FHIR resource definition.", e);
-                        }
-                    }
-                }
-            }
+            parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath(), jsonFileFilter);
         }
 
         List<String> terminologyDirs = ((FHIRToolConfig) toolConfig).getTerminologyDirs();
@@ -216,6 +135,97 @@ public class FHIRSpecParser extends AbstractSpecParser {
             }
         }
         populateValues();
+    }
+
+    public void parseIG(ToolConfig toolConfig, String igName, String igDirPath, FilenameFilter jsonFileFilter) {
+
+        String igPath;
+        if (!igDirPath.contains(toolConfig.getSpecBasePath())) {
+            igPath = toolConfig.getSpecBasePath() + igDirPath;
+        } else {
+            igPath = igDirPath;
+        }
+        File igDirPathFile = new File(igPath);
+        if (igDirPathFile.isDirectory()) {
+            File[] igProfileFiles = igDirPathFile.listFiles(jsonFileFilter);
+            if (igProfileFiles != null) {
+                FHIRImplementationGuide fhirImplementationGuide =
+                        FHIRSpecificationData.getDataHolderInstance().getFhirImplementationGuides().get(igName);
+                if (fhirImplementationGuide == null) {
+                    fhirImplementationGuide = new FHIRImplementationGuide();
+                    fhirImplementationGuide.setName(igName);
+                    FHIRSpecificationData.getDataHolderInstance().addFhirImplementationGuide(igName,
+                            fhirImplementationGuide);
+                }
+                for (File igProfileFile : igProfileFiles) {
+                    if (igProfileFile.isDirectory() || !isValidFHIRDefinition(igProfileFile)) {
+                        continue;
+                    }
+                    IBaseResource parsedDef;
+                    try {
+                        parsedDef = parseDefinition(igProfileFile);
+                        if (parsedDef instanceof StructureDefinition) {
+                            StructureDefinition structureDefinition = (StructureDefinition) parsedDef;
+                            String code = structureDefinition.getKind().toCode();
+                            if ("resource".equals(code)) {
+                                FHIRResourceDef fhirResourceDef = new FHIRResourceDef();
+                                fhirResourceDef.setDefinition(structureDefinition);
+                                fhirResourceDef.setKind(DefKind.fromCode(code));
+                                fhirImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
+                                        fhirResourceDef);
+                            }
+                        } else if (parsedDef instanceof SearchParameter) {
+                            SearchParameter searchParameter = (SearchParameter) parsedDef;
+                            FHIRSearchParamDef fhirSearchParamDef = new FHIRSearchParamDef();
+                            fhirSearchParamDef.setSearchParameter(searchParameter);
+                            fhirImplementationGuide.getSearchParameters().putIfAbsent(searchParameter.getUrl(),
+                                    fhirSearchParamDef);
+                        } else if (parsedDef instanceof Bundle) {
+                            //Bundled definitions
+                            Bundle definitions = (Bundle) parsedDef;
+                            for (Bundle.BundleEntryComponent entry : definitions.getEntry()) {
+                                Resource fhirResourceEntry = entry.getResource();
+                                if (fhirResourceEntry instanceof SearchParameter) {
+                                    //Bundled search parameters
+                                    SearchParameter searchParameter = (SearchParameter) fhirResourceEntry;
+                                    FHIRSearchParamDef fhirSearchParamDef = new FHIRSearchParamDef();
+                                    fhirSearchParamDef.setSearchParameter(searchParameter);
+                                    fhirImplementationGuide.getSearchParameters().putIfAbsent(
+                                            searchParameter.getUrl(), fhirSearchParamDef);
+                                } else if (fhirResourceEntry instanceof OperationDefinition) {
+                                    //Bundled Operation Definitions
+                                    OperationDefinition operationDefinition = (OperationDefinition) fhirResourceEntry;
+                                    FHIROperationDef operationDef = new FHIROperationDef();
+                                    operationDef.setOperationDefinition(operationDefinition);
+                                    fhirImplementationGuide.getOperations().putIfAbsent(operationDefinition.getUrl(), operationDef);
+                                }
+                            }
+                        } else if (parsedDef instanceof CodeSystem) {
+                            CodeSystem codeSystem = (CodeSystem) parsedDef;
+                            FHIRTerminologyDef fhirTerminologyDef = new FHIRTerminologyDef();
+                            fhirTerminologyDef.setTerminologyResource(codeSystem);
+                            fhirTerminologyDef.setUrl(codeSystem.getUrl());
+                            FHIRSpecificationData.getDataHolderInstance().addCodeSystem(fhirTerminologyDef.getUrl(),
+                                    fhirTerminologyDef);
+                        } else if (parsedDef instanceof ValueSet) {
+                            ValueSet valueSet = (ValueSet) parsedDef;
+                            FHIRTerminologyDef fhirTerminologyDef = new FHIRTerminologyDef();
+                            fhirTerminologyDef.setTerminologyResource(valueSet);
+                            fhirTerminologyDef.setUrl(valueSet.getUrl());
+                            FHIRSpecificationData.getDataHolderInstance().addValueSet(fhirTerminologyDef.getUrl(),
+                                    fhirTerminologyDef);
+                        } else if (parsedDef instanceof ImplementationGuide) {
+                            // overriding the FHIR implementation guide name if the ImplementationGuide resource json
+                            // file is available in the IG directory.
+                            fhirImplementationGuide.setName(((ImplementationGuide) parsedDef).getName());
+                            fhirImplementationGuide.setId(((ImplementationGuide) parsedDef).getId());
+                        }
+                    } catch (CodeGenException e) {
+                        LOG.error("Error occurred while processing FHIR resource definition.", e);
+                    }
+                }
+            }
+        }
     }
 
     public static IBaseResource parseDefinition(File file) throws CodeGenException {
