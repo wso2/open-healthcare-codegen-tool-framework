@@ -57,13 +57,15 @@ public class FHIRSpecParser extends AbstractSpecParser {
 
     private static final Log LOG = LogFactory.getLog(FHIRSpecParser.class);
 
+    // Create a FilenameFilter to filter JSON files
+    private static final FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
+
     @Override
     public void parse(ToolConfig toolConfig) {
+
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
-        // Create a FilenameFilter to filter JSON files
-        FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
         for (String igName : igConfigs.keySet()) {
-            parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath(), jsonFileFilter);
+            parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath());
         }
 
         List<String> terminologyDirs = ((FHIRToolConfig) toolConfig).getTerminologyDirs();
@@ -137,14 +139,13 @@ public class FHIRSpecParser extends AbstractSpecParser {
         populateValues();
     }
 
-    public void parseIG(ToolConfig toolConfig, String igName, String igDirPath, FilenameFilter jsonFileFilter) {
+    /**
+     * This method is used to populate the values of the FHIRSpecificationData to the toolContext.
+     */
+    public void parseIG(ToolConfig toolConfig, String igName, String igDirPath) {
 
-        String igPath;
-        if (!igDirPath.contains(toolConfig.getSpecBasePath())) {
-            igPath = toolConfig.getSpecBasePath() + igDirPath;
-        } else {
-            igPath = igDirPath;
-        }
+        String igPath = igDirPath.contains(toolConfig.getSpecBasePath()) ?
+                igDirPath : toolConfig.getSpecBasePath() + igDirPath;
         File igDirPathFile = new File(igPath);
         if (igDirPathFile.isDirectory()) {
             File[] igProfileFiles = igDirPathFile.listFiles(jsonFileFilter);
