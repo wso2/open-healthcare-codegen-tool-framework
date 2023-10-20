@@ -31,7 +31,23 @@ import java.util.Map;
  */
 public class FHIRSpecUtils {
 
-    private static final List<String>  defaultSkippedProperties = new ArrayList<>();
+    private static final List<String> defaultSkippedProperties = new ArrayList<>();
+
+    private static final String[] DEFAULT_BASE_DATA_TYPE_PROFILES = {
+            "Address.profile.json", "DataRequirement.profile.json", "Period.profile.json", "UsageContext.profile.json",
+            "integer.profile.json", "Age.profile.json", "Distance.profile.json", "Quantity.profile.json",
+            "base64Binary.profile.json", "markdown.profile.json", "Annotation.profile.json", "Dosage.profile.json",
+            "Range.profile.json", "boolean.profile.json", "oid.profile.json", "Attachment.profile.json",
+            "Duration.profile.json", "Ratio.profile.json", "canonical.profile.json", "positiveInt.profile.json",
+            "CodeableConcept.profile.json", "Expression.profile.json", "Reference.profile.json",
+            "code.profile.json", "string.profile.json", "Coding.profile.json", "HumanName.profile.json",
+            "RelatedArtifact.profile.json", "date.profile.json", "time.profile.json", "ContactDetail.profile.json",
+            "Identifier.profile.json", "SampledData.profile.json", "dateTime.profile.json", "unsignedInt.profile.json",
+            "ContactPoint.profile.json", "Meta.profile.json", "Signature.profile.json", "decimal.profile.json",
+            "uri.profile.json", "Contributor.profile.json", "Money.profile.json", "Timing.profile.json", "id.profile.json",
+            "url.profile.json", "Count.profile.json", "ParameterDefinition.profile.json", "TriggerDefinition.profile.json",
+            "instant.profile.json", "uuid.profile.json"
+    };
 
     static {
         defaultSkippedProperties.add("implicitRules");
@@ -138,5 +154,9 @@ public class FHIRSpecUtils {
             codingMap.put(valueSet.getUrl(), codings);
         }
         return codingMap;
+    }
+
+    public static String[] getDefaultBaseDataTypeProfiles() {
+        return DEFAULT_BASE_DATA_TYPE_PROFILES;
     }
 }

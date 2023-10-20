@@ -22,28 +22,40 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeSystem;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.ImplementationGuide;
+import org.hl7.fhir.r4.model.OperationDefinition;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.SearchParameter;
+import org.hl7.fhir.r4.model.StructureDefinition;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractSpecParser;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecUtils;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.IGConfig;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.*;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRDataTypeDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIROperationDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRResourceDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
-
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -64,6 +76,9 @@ public class FHIRSpecParser extends AbstractSpecParser {
     public void parse(ToolConfig toolConfig) {
 
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
+        // Create a FilenameFilter to filter JSON files
+        FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
+        populateBaseDataTypes();
         for (String igName : igConfigs.keySet()) {
             parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath());
         }
@@ -107,7 +122,6 @@ public class FHIRSpecParser extends AbstractSpecParser {
             }
         }
         FHIRSpecificationData.getDataHolderInstance().setTerminologies();
-        Map<String, Map<String, Coding>> codingMap = FHIRSpecificationData.getDataHolderInstance().getTerminologies();
         List<String> dataTypeProfileDirs = ((FHIRToolConfig) toolConfig).getDataTypeProfileDirs();
         for (String dataTypeProfileDir : dataTypeProfileDirs) {
             File dataTypeProfileDirPath = new File(toolConfig.getSpecBasePath() + dataTypeProfileDir);
@@ -174,6 +188,12 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 fhirResourceDef.setKind(DefKind.fromCode(code));
                                 fhirImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
                                         fhirResourceDef);
+                            } else if ("primary-type".equals(code) || "complex-type".equals(code)) {
+                                FHIRDataTypeDef dataTypeDef = new FHIRDataTypeDef();
+                                dataTypeDef.setDefinition(structureDefinition);
+                                dataTypeDef.setKind(DefKind.fromCode(code));
+                                FHIRSpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
+                                        dataTypeDef);
                             }
                         } else if (parsedDef instanceof SearchParameter) {
                             SearchParameter searchParameter = (SearchParameter) parsedDef;
@@ -229,11 +249,61 @@ public class FHIRSpecParser extends AbstractSpecParser {
         }
     }
 
+    /**
+     * This method is used to populate the base data types to the FHIRSpecificationData.
+     */
+    private static void populateBaseDataTypes() {
+        //read base data types from resources
+        for (String baseDataTypeFile : FHIRSpecUtils.getDefaultBaseDataTypeProfiles()) {
+            InputStream resourceAsStream = FHIRSpecParser.class.getClassLoader().getResourceAsStream(
+                    "profiles/base-data-types/" + baseDataTypeFile);
+            try {
+                IBaseResource parsedDef = parseDefinition(resourceAsStream);
+                if (parsedDef instanceof StructureDefinition) {
+                    StructureDefinition structureDefinition = (StructureDefinition) parsedDef;
+                    String code = structureDefinition.getKind().toCode();
+                    if ("primary-type".equals(code) || "complex-type".equals(code)) {
+                        FHIRDataTypeDef dataTypeDef = new FHIRDataTypeDef();
+                        dataTypeDef.setDefinition(structureDefinition);
+                        dataTypeDef.setKind(DefKind.fromCode(code));
+                        FHIRSpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
+                                dataTypeDef);
+                    }
+                }
+            } catch (CodeGenException e) {
+                LOG.error("Error occurred while processing FHIR data profile definitions.", e);
+            }
+        }
+    }
+
+    /**
+     * This method is used to parse the FHIR structure definition from the file.
+     *
+     * @param file definition file
+     * @return parsed FHIR structure definition
+     * @throws CodeGenException if an error occurs while parsing the definition
+     */
     public static IBaseResource parseDefinition(File file) throws CodeGenException {
         IParser parser = CTX.newJsonParser();
         try {
             return parser.parseResource(new FileReader(file));
         } catch (FileNotFoundException e) {
+            throw new CodeGenException("Error occurred while parsing FHIR definition.", e);
+        }
+    }
+
+    /**
+     * This method is used to parse the FHIR structure definition from the input stream.
+     *
+     * @param inputStream definition file input stream
+     * @return parsed FHIR structure definition
+     * @throws CodeGenException if an error occurs while parsing the definition
+     */
+    public static IBaseResource parseDefinition(InputStream inputStream) throws CodeGenException {
+        IParser parser = CTX.newJsonParser();
+        try {
+            return parser.parseResource(inputStream);
+        } catch (Exception e) {
             throw new CodeGenException("Error occurred while parsing FHIR definition.", e);
         }
     }
