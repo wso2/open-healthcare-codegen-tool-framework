@@ -23,10 +23,14 @@ import org.hl7.fhir.r4.model.ElementDefinition;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRDataTypeDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +45,7 @@ public class FHIRSpecificationData implements SpecificationData {
     private Map<String, FHIRTerminologyDef> valueSets;
     private Map<String, FHIRTerminologyDef> codeSystems;
     private Map<String, Map<String,Coding>> resolvedTerminologies;
+    private final HashMap<String, List<FHIRSearchParamDef>> internationalSpecSearchParameters = new HashMap<>();
 
     public static FHIRSpecificationData getDataHolderInstance() {
         return DATA_HOLDER_INSTANCE;
@@ -120,5 +125,21 @@ public class FHIRSpecificationData implements SpecificationData {
 
     public boolean isMultiDatatype(ElementDefinition elementDefinition) {
         return FHIRSpecUtils.isMultiDataType(elementDefinition);
+    }
+
+    public void addInternationalSearchParameter(String resourceType, FHIRSearchParamDef searchParameter) {
+        if (!internationalSpecSearchParameters.containsKey(resourceType)) {
+            internationalSpecSearchParameters.put(resourceType, new ArrayList<>() {
+                {
+                    add(searchParameter);
+                }
+            });
+        } else {
+            internationalSpecSearchParameters.get(resourceType).add(searchParameter);
+        }
+    }
+
+    public List<FHIRSearchParamDef> getInternationalSearchParameters(String resourceType) {
+        return internationalSpecSearchParameters.getOrDefault(resourceType, Collections.emptyList());
     }
 }

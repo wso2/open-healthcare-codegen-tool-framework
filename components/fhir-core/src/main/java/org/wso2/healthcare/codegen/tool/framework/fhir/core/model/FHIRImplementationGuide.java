@@ -18,6 +18,8 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinition;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +32,27 @@ public class FHIRImplementationGuide {
     private Map<String, FHIRResourceDef> resources;
     private Map<String, FHIRSearchParamDef> searchParameters;
     private Map<String, FHIROperationDef> operations;
+    private Map<String, APIDefinition> apiDefinitions;
 
     public FHIRImplementationGuide() {
         resources = new HashMap<>();
         searchParameters = new HashMap<>();
         operations = new HashMap<>();
+        apiDefinitions = new HashMap<>();
+    }
+
+    public Map<String, APIDefinition> getApiDefinitions() {
+        return apiDefinitions;
+    }
+
+    public void addApiDefinition(String key, APIDefinition apiDefinition) {
+        if (apiDefinitions.containsKey(key)) {
+            APIDefinition currentApiDef = apiDefinitions.get(key);
+            currentApiDef.getOpenAPI().getComponents().getSchemas().putAll(
+                    apiDefinition.getOpenAPI().getComponents().getSchemas());
+        } else {
+            apiDefinitions.put(key, apiDefinition);
+        }
     }
 
     public String getName() {

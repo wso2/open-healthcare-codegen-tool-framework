@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeSystem;
-import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.ImplementationGuide;
 import org.hl7.fhir.r4.model.OperationDefinition;
 import org.hl7.fhir.r4.model.Resource;
@@ -48,6 +48,8 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIROperationD
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRResourceDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.OASGenerator;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
 import java.io.File;
@@ -74,6 +76,12 @@ public class FHIRSpecParser extends AbstractSpecParser {
 
     @Override
     public void parse(ToolConfig toolConfig) {
+
+        try {
+            populateCommonSearchParameters();
+        } catch (CodeGenException e) {
+            LOG.error("Error occurred while populating search parameters.", e);
+        }
 
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
         // Create a FilenameFilter to filter JSON files
@@ -194,6 +202,20 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 dataTypeDef.setKind(DefKind.fromCode(code));
                                 FHIRSpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
                                         dataTypeDef);
+                                OASGenerator oasGenerator = OASGenerator.getInstance();
+                                APIDefinition apiDefinition;
+                                if (fhirImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
+                                    apiDefinition = fhirImplementationGuide.
+                                            getApiDefinitions().get(structureDefinition.getType());
+                                } else {
+                                    apiDefinition = new APIDefinition();
+                                    apiDefinition.setResourceType(structureDefinition.getType());
+                                }
+                                apiDefinition.addSupportedProfile(structureDefinition.getUrl());
+                                apiDefinition.addSupportedIg(igName);
+                                apiDefinition.setOpenAPI(oasGenerator.generateResourceSchema(apiDefinition,
+                                        structureDefinition));
+                                fhirImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
                             }
                         } else if (parsedDef instanceof SearchParameter) {
                             SearchParameter searchParameter = (SearchParameter) parsedDef;
@@ -304,7 +326,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
         try {
             return parser.parseResource(inputStream);
         } catch (Exception e) {
-            throw new CodeGenException("Error occurred while parsing FHIR definition.", e);
+            throw new CodeGenException("Error occurred while parsing FHIR definition from the stream.", e);
         }
     }
 
@@ -361,5 +383,29 @@ public class FHIRSpecParser extends AbstractSpecParser {
             LOG.error("Error occurred while reading the definition file: " + definitionFile.getName(), e);
         }
         return false;
+    }
+
+    /**
+     * Populate International SearchParameters map
+     * ref:<a href="https://www.hl7.org/fhir/search-parameters.json">https://www.hl7.org/fhir/search-parameters.json</a>
+     *
+     * @throws CodeGenException
+     */
+    private void populateCommonSearchParameters() throws CodeGenException {
+        InputStream searchParamsStream = FHIRSpecParser.class.getClassLoader().getResourceAsStream(
+                "profiles" + File.separator + "all-search-parameters.json");
+        LOG.info("Loading international search parameters");
+        Bundle paramsBundle = (Bundle) parseDefinition(searchParamsStream);
+
+        for (Bundle.BundleEntryComponent resource : paramsBundle.getEntry()) {
+            if (resource.hasResource() && "SearchParameter".equals(resource.getResource().getResourceType().toString())) {
+                SearchParameter searchParameter = (SearchParameter) resource.getResource();
+                for (CodeType baseResource : searchParameter.getBase()) {
+                    String resourceName = baseResource.getCode();
+                    FHIRSpecificationData.getDataHolderInstance().addInternationalSearchParameter(resourceName,
+                            new FHIRSearchParamDef(searchParameter));
+                }
+            }
+        }
     }
 }
