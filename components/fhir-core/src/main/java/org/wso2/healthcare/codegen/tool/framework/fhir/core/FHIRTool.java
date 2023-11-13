@@ -18,6 +18,9 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import org.apache.commons.io.IOUtils;
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractTool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.Tool;
@@ -25,6 +28,10 @@ import org.wso2.healthcare.codegen.tool.framework.commons.core.ToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +41,7 @@ import java.util.Map;
  */
 public class FHIRTool extends AbstractTool {
 
+    public static final String BASE_OAS_MODEL_PROPERTY = "baseOAS";
     private FHIRToolContext toolContext;
     private Map<String, Tool> toolImplementations;
 

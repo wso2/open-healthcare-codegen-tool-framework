@@ -32,6 +32,13 @@ public class FHIRSearchParamDef implements SpecModel {
 
     private SearchParameter searchParameter;
 
+    public FHIRSearchParamDef() {
+    }
+
+    public FHIRSearchParamDef(SearchParameter searchParameter) {
+        this.searchParameter = searchParameter;
+    }
+
     public SearchParameter getSearchParameter() {
         return searchParameter;
     }
