@@ -52,12 +52,6 @@ public class FHIRTool extends AbstractTool {
     public void initialize(ToolConfig toolConfig) throws CodeGenException {
         toolContext = new FHIRToolContext();
         toolContext.setConfig(toolConfig);
-        try {
-            toolContext.addCustomToolProperty(BASE_OAS_MODEL_PROPERTY, populateFhirOASStructure());
-        } catch (IOException e) {
-            String msg = "Error occurred while populating base FHIR OAS structure.";
-            throw new CodeGenException(msg, e);
-        }
         FHIRSpecParser specParser = new FHIRSpecParser();
         specParser.parse(toolConfig);
         toolContext.setSpecificationData(FHIRSpecificationData.getDataHolderInstance());
@@ -77,21 +71,5 @@ public class FHIRTool extends AbstractTool {
 
     public void setToolImplementations(Map<String, Tool> toolImplementations) {
         this.toolImplementations = toolImplementations;
-    }
-
-    /**
-     * Populates base FHIR OAS definition structure.
-     *
-     * @return OAS model of the base structure
-     */
-    private OpenAPI populateFhirOASStructure() throws IOException {
-        try (InputStream inputStream = FHIRTool.class.getClassLoader().getResourceAsStream(
-                "api-defs" + File.separator + "oas-static-content.yaml")) {
-            if (inputStream != null) {
-                String parsedYamlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-                return new OpenAPIV3Parser().readContents(parsedYamlContent).getOpenAPI();
-            }
-        }
-        return null;
     }
 }
