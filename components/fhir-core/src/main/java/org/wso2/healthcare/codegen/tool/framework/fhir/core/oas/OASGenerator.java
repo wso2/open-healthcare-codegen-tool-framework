@@ -213,13 +213,13 @@ public class OASGenerator {
         PathItem idPath = new PathItem();
         for (Map.Entry<String, String> interaction : interactions.entrySet()) {
 
+            Operation operation = new Operation();
             switch (interaction.getKey()) {
                 case "read":
-                    Operation readOp = new Operation();
-                    readOp.addTagsItem(interaction.getValue());
-                    readOp.addTagsItem(apiDefinition.getResourceType());
-                    readOp.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
-                    readOp.addExtension("x-auth-type", "Application & Application User");
+                    operation.addTagsItem(interaction.getValue());
+                    operation.addTagsItem(apiDefinition.getResourceType());
+                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addExtension("x-auth-type", "Application & Application User");
                     ApiResponses getResponses = new ApiResponses();
                     ApiResponse readSuccessResponse = new ApiResponse();
                     readSuccessResponse.setDescription(
@@ -228,21 +228,20 @@ public class OASGenerator {
                     MediaType mediaType = new MediaType();
                     Schema schema = new Schema();
                     schema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
-                    readOp.addParametersItem(OASGenUtils.generateParameter(
+                    operation.addParametersItem(OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
                     mediaType.setSchema(schema);
                     successContent.addMediaType(APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, mediaType);
                     readSuccessResponse.setContent(successContent);
                     getResponses.addApiResponse("200", readSuccessResponse);
-                    readOp.setResponses(getResponses);
-                    idPath.setGet(readOp);
+                    operation.setResponses(getResponses);
+                    idPath.setGet(operation);
                     break;
                 case "search":
-                    Operation searchOp = new Operation();
-                    searchOp.addTagsItem(interaction.getValue());
-                    searchOp.addTagsItem(apiDefinition.getResourceType());
-                    searchOp.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
-                    searchOp.addExtension("x-auth-type", "Application & Application User");
+                    operation.addTagsItem(interaction.getValue());
+                    operation.addTagsItem(apiDefinition.getResourceType());
+                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addExtension("x-auth-type", "Application & Application User");
                     ApiResponses searchResponses = new ApiResponses();
                     ApiResponse searchSuccessResponse = new ApiResponse();
                     searchSuccessResponse.setDescription(
@@ -251,21 +250,21 @@ public class OASGenerator {
                     MediaType searchMediaType = new MediaType();
                     Schema searchSchema = new Schema();
                     searchSchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
-                    searchOp.addParametersItem(OASGenUtils.generateParameter(
+                    operation.addParametersItem(OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
                     searchSchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + "Bundle");
                     searchMediaType.setSchema(searchSchema);
                     searchSuccessContent.addMediaType(APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, searchMediaType);
                     searchSuccessResponse.setContent(searchSuccessContent);
                     searchResponses.addApiResponse("200", searchSuccessResponse);
-                    searchOp.setResponses(searchResponses);
-                    rootPath.setGet(searchOp);
+                    operation.setResponses(searchResponses);
+                    rootPath.setGet(operation);
+                    break;
                 case "create":
-                    Operation createOp = new Operation();
-                    createOp.addTagsItem(interaction.getValue());
-                    createOp.addTagsItem(apiDefinition.getResourceType());
-                    createOp.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
-                    createOp.addExtension("x-auth-type", "Application & Application User");
+                    operation.addTagsItem(interaction.getValue());
+                    operation.addTagsItem(apiDefinition.getResourceType());
+                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addExtension("x-auth-type", "Application & Application User");
                     ApiResponses postResponses = new ApiResponses();
                     ApiResponse createSuccessResponse = new ApiResponse();
                     RequestBody requestBody = new RequestBody();
@@ -273,15 +272,14 @@ public class OASGenerator {
                     createSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     postResponses.addApiResponse("201", createSuccessResponse);
-                    createOp.setResponses(postResponses);
-                    rootPath.setPost(createOp);
+                    operation.setResponses(postResponses);
+                    rootPath.setPost(operation);
                     break;
                 case "update":
-                    Operation updateOp = new Operation();
-                    updateOp.addTagsItem(interaction.getValue());
-                    updateOp.addTagsItem(apiDefinition.getResourceType());
-                    updateOp.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
-                    updateOp.addExtension("x-auth-type", "Application & Application User");
+                    operation.addTagsItem(interaction.getValue());
+                    operation.addTagsItem(apiDefinition.getResourceType());
+                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addExtension("x-auth-type", "Application & Application User");
                     ApiResponses putResponses = new ApiResponses();
                     ApiResponse updateSuccessResponse = new ApiResponse();
                     RequestBody putRequestBody = new RequestBody();
@@ -289,17 +287,16 @@ public class OASGenerator {
                     updateSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     putResponses.addApiResponse("200", updateSuccessResponse);
-                    updateOp.setResponses(putResponses);
-                    updateOp.addParametersItem(OASGenUtils.generateParameter(
+                    operation.setResponses(putResponses);
+                    operation.addParametersItem(OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
-                    idPath.setPut(updateOp);
+                    idPath.setPut(operation);
                     break;
                 case "patch":
-                    Operation patchOp = new Operation();
-                    patchOp.addTagsItem(interaction.getValue());
-                    patchOp.addTagsItem(apiDefinition.getResourceType());
-                    patchOp.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
-                    patchOp.addExtension("x-auth-type", "Application & Application User");
+                    operation.addTagsItem(interaction.getValue());
+                    operation.addTagsItem(apiDefinition.getResourceType());
+                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addExtension("x-auth-type", "Application & Application User");
                     ApiResponses patchResponses = new ApiResponses();
                     ApiResponse patchSuccessResponse = new ApiResponse();
                     RequestBody patchRequestBody = new RequestBody();
@@ -307,24 +304,23 @@ public class OASGenerator {
                     patchSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     patchResponses.addApiResponse("200", patchSuccessResponse);
-                    patchOp.setResponses(patchResponses);
-                    idPath.setPatch(patchOp);
+                    operation.setResponses(patchResponses);
+                    idPath.setPatch(operation);
                     break;
                 case "delete":
-                    Operation deleteOp = new Operation();
-                    deleteOp.addTagsItem(interaction.getValue());
-                    deleteOp.addTagsItem(apiDefinition.getResourceType());
-                    deleteOp.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
-                    deleteOp.addExtension("x-auth-type", "Application & Application User");
+                    operation.addTagsItem(interaction.getValue());
+                    operation.addTagsItem(apiDefinition.getResourceType());
+                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addExtension("x-auth-type", "Application & Application User");
                     ApiResponses deleteResponses = new ApiResponses();
                     ApiResponse deleteSuccessResponse = new ApiResponse();
                     deleteSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     deleteResponses.addApiResponse("204", deleteSuccessResponse);
-                    deleteOp.setResponses(deleteResponses);
-                    deleteOp.addParametersItem(OASGenUtils.generateParameter(
+                    operation.setResponses(deleteResponses);
+                    operation.addParametersItem(OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
-                    idPath.setDelete(deleteOp);
+                    idPath.setDelete(operation);
                     break;
             }
         }
