@@ -23,7 +23,7 @@
 
     <groupId>org.wso2.healthcare.codegen.tool.framework</groupId>
     <artifactId>open-healthcare-codegen-tool-framework</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>

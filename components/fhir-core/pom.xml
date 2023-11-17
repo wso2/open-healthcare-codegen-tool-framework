@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.wso2.healthcare.codegen.tool.framework</groupId>
         <artifactId>open-healthcare-codegen-tool-framework</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>fhir-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <dependencies>
         <!-- Open healthcare tool framework commons -->
