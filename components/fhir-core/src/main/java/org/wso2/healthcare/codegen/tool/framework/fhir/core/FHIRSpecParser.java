@@ -196,12 +196,6 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 fhirResourceDef.setKind(DefKind.fromCode(code));
                                 fhirImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
                                         fhirResourceDef);
-                            } else if ("primary-type".equals(code) || "complex-type".equals(code)) {
-                                FHIRDataTypeDef dataTypeDef = new FHIRDataTypeDef();
-                                dataTypeDef.setDefinition(structureDefinition);
-                                dataTypeDef.setKind(DefKind.fromCode(code));
-                                FHIRSpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
-                                        dataTypeDef);
                                 OASGenerator oasGenerator = OASGenerator.getInstance();
                                 APIDefinition apiDefinition;
                                 if (fhirImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
@@ -216,6 +210,12 @@ public class FHIRSpecParser extends AbstractSpecParser {
                                 apiDefinition.setOpenAPI(oasGenerator.generateResourceSchema(apiDefinition,
                                         structureDefinition));
                                 fhirImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
+                            } else if ("primary-type".equals(code) || "complex-type".equals(code)) {
+                                FHIRDataTypeDef dataTypeDef = new FHIRDataTypeDef();
+                                dataTypeDef.setDefinition(structureDefinition);
+                                dataTypeDef.setKind(DefKind.fromCode(code));
+                                FHIRSpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
+                                        dataTypeDef);
                             }
                         } else if (parsedDef instanceof SearchParameter) {
                             SearchParameter searchParameter = (SearchParameter) parsedDef;
