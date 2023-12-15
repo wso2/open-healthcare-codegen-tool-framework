@@ -228,7 +228,38 @@ public class FHIRSpecParser extends AbstractSpecParser {
                             Bundle definitions = (Bundle) parsedDef;
                             for (Bundle.BundleEntryComponent entry : definitions.getEntry()) {
                                 Resource fhirResourceEntry = entry.getResource();
-                                if (fhirResourceEntry instanceof SearchParameter) {
+                                if (fhirResourceEntry instanceof StructureDefinition) {
+                                    // Bundled structure definitions
+                                    StructureDefinition structureDefinition = (StructureDefinition) fhirResourceEntry;
+                                    String code = structureDefinition.getKind().toCode();
+                                    if ("resource".equals(code)) {
+                                        FHIRResourceDef fhirResourceDef = new FHIRResourceDef();
+                                        fhirResourceDef.setDefinition(structureDefinition);
+                                        fhirResourceDef.setKind(DefKind.fromCode(code));
+                                        fhirImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
+                                                fhirResourceDef);
+                                        OASGenerator oasGenerator = OASGenerator.getInstance();
+                                        APIDefinition apiDefinition;
+                                        if (fhirImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
+                                            apiDefinition = fhirImplementationGuide.
+                                                    getApiDefinitions().get(structureDefinition.getType());
+                                        } else {
+                                            apiDefinition = new APIDefinition();
+                                            apiDefinition.setResourceType(structureDefinition.getType());
+                                        }
+                                        apiDefinition.addSupportedProfile(structureDefinition.getUrl());
+                                        apiDefinition.addSupportedIg(igName);
+                                        apiDefinition.setOpenAPI(oasGenerator.generateResourceSchema(apiDefinition,
+                                                structureDefinition));
+                                        fhirImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
+                                    } else if ("primary-type".equals(code) || "complex-type".equals(code)) {
+                                        FHIRDataTypeDef dataTypeDef = new FHIRDataTypeDef();
+                                        dataTypeDef.setDefinition(structureDefinition);
+                                        dataTypeDef.setKind(DefKind.fromCode(code));
+                                        FHIRSpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
+                                                dataTypeDef);
+                                    }
+                                } else if (fhirResourceEntry instanceof SearchParameter) {
                                     //Bundled search parameters
                                     SearchParameter searchParameter = (SearchParameter) fhirResourceEntry;
                                     FHIRSearchParamDef fhirSearchParamDef = new FHIRSearchParamDef();
