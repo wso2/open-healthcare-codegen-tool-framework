@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.wso2.healthcare.codegen.tool.framework</groupId>
         <artifactId>open-healthcare-codegen-tool-framework</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>commons</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <dependencies>
         <dependency>
