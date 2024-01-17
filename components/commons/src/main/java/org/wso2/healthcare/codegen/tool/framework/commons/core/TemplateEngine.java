@@ -25,6 +25,7 @@ import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenExcep
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -104,6 +105,23 @@ public class TemplateEngine {
             throw new CodeGenException("Error occurred while accessing output file", e);
         } catch (Exception e) {
             throw new CodeGenException("Error occurred while generating output file.", e);
+        }
+    }
+
+    /**
+     * Used to generate a resultant string from the velocity template.
+     *
+     * @param templateName    name of the velocity template
+     * @param templateContext velocity context with included info
+     * @throws CodeGenException template string generation error
+     */
+    public String generateOutputAsString(String templateName, TemplateContext templateContext) throws CodeGenException {
+        try (Writer writer = new StringWriter()) {
+            this.velocityEngine.mergeTemplate(templateName, Charset.defaultCharset().toString(),
+                    templateContext.getVelocityCtx(), writer);
+            return writer.toString();
+        } catch (Exception e) {
+            throw new CodeGenException("Error occurred while generating output string.", e);
         }
     }
 
