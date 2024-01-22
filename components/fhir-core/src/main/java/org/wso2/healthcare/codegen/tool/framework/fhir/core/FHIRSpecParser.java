@@ -361,6 +361,22 @@ public class FHIRSpecParser extends AbstractSpecParser {
         }
     }
 
+    /**
+     * This method is used to parse the FHIR structure definition from the string.
+     *
+     * @param resourceContent FHIR resource string
+     * @return parsed FHIR structure definition
+     * @throws CodeGenException if an error occurs while parsing the definition
+     */
+    public static IBaseResource parseDefinition(String resourceContent) throws CodeGenException {
+        IParser parser = CTX.newJsonParser();
+        try {
+            return parser.parseResource(resourceContent);
+        } catch (Exception e) {
+            throw new CodeGenException("Error occurred while parsing FHIR definition from the string.", e);
+        }
+    }
+
     public static void populateValues() {
 
         for (Map.Entry<String, FHIRImplementationGuide> igEntry : FHIRSpecificationData.getDataHolderInstance().getFhirImplementationGuides().entrySet()) {
