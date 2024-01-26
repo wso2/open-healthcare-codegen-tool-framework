@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.CaseUtils;
 import org.hl7.fhir.r4.model.ElementDefinition;
 import org.hl7.fhir.r4.model.StructureDefinition;
+import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRTool;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
@@ -112,7 +113,8 @@ public class OASGenerator {
      * @param structureDefinition FHIR resource definition
      * @return Generated OAS definition
      */
-    public OpenAPI generateResourceSchema(APIDefinition apiDefinition, StructureDefinition structureDefinition) {
+    public OpenAPI generateResourceSchema(APIDefinition apiDefinition, StructureDefinition structureDefinition)
+            throws CodeGenException {
         OpenAPI resourceOAS = new OpenAPI();
         resourceOAS.setComponents(fhirOASBaseStructure.getComponents());
         apiDefinition.setOpenAPI(resourceOAS);
@@ -120,51 +122,57 @@ public class OASGenerator {
         populateOASInfo(apiDefinition);
         populateOASInternalValues(apiDefinition);
         for (ElementDefinition element : structureDefinition.getSnapshot().getElement()) {
-            String id = element.getId();
-            ObjectSchema objectSchema = new ObjectSchema();
-            Set<String> requiredElementsCollector = new LinkedHashSet<>();
-            ComposedSchema allOfSchema = new ComposedSchema();
-            Map<String, Schema> propertySchemaMap = new HashMap<>();
-            Schema parentReference = new Schema();
-            parentReference.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + "DomainResource");
-            allOfSchema.addAllOfItem(parentReference);
-            for (ElementDefinition.TypeRefComponent type : element.getType()) {
-                StringBuilder elementName;
-                if (id.contains(":")) {
-                    //sliced element. skip for now, todo: handle separately
-                    continue;
+            try {
+                String id = element.getId();
+                ObjectSchema objectSchema = new ObjectSchema();
+                Set<String> requiredElementsCollector = new LinkedHashSet<>();
+                ComposedSchema allOfSchema = new ComposedSchema();
+                Map<String, Schema> propertySchemaMap = new HashMap<>();
+                Schema parentReference = new Schema();
+                parentReference.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + "DomainResource");
+                allOfSchema.addAllOfItem(parentReference);
+                for (ElementDefinition.TypeRefComponent type : element.getType()) {
+                    StringBuilder elementName;
+                    // Skip processing the element if the element is not immediate child or a sliced element
+                    if (id.codePoints().filter(ch -> ch == (int)'.').count() > 1 || id.contains(":")) {
+                        //sliced element. skip for now, todo: handle separately
+                        continue;
+                    }
+                    if (id.contains("[")) {
+                        elementName = new StringBuilder(id.substring(id.lastIndexOf(".") + 1, id.lastIndexOf("[")));
+                    } else {
+                        elementName = new StringBuilder(id.substring(id.lastIndexOf(".") + 1));
+                    }
+                    if (element.getType().size() != 1) {
+                        elementName.append(CaseUtils.toCamelCase(type.getCode(), true, (char[]) null));
+                    }
+                    ObjectSchema propertySchema = new ObjectSchema();
+                    if (resourceOAS.getComponents().getSchemas().containsKey(type.getCode())) {
+                        //schema object available, add ref
+                        propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + type.getCode());
+                    } else if (APIDefinitionConstants.DATA_TYPE_BACKBONE.equals(type.getCode())) {
+                        propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + elementName);
+                    } else {
+                        String oasDataType = OASGenUtils.mapToOASDataType(
+                                type.getCode().substring(type.getCode().lastIndexOf(".") + 1));
+                        propertySchema.setType(oasDataType);
+                        propertySchema.setPattern(OASGenUtils.getRegexForDataType(oasDataType));
+                    }
+                    propertySchema.setDescription(element.getDefinition());
+                    propertySchemaMap.put(elementName.toString(), propertySchema);
+                    if (element.getMin() != 0) {
+                        requiredElementsCollector.add(elementName.toString());
+                    }
                 }
-                if (id.contains("[")) {
-                    elementName = new StringBuilder(id.substring(id.lastIndexOf(".") + 1, id.lastIndexOf("[")));
-                } else {
-                    elementName = new StringBuilder(id.substring(id.lastIndexOf(".") + 1));
-                }
-                if (element.getType().size() != 1) {
-                    elementName.append(CaseUtils.toCamelCase(type.getCode(), true, (char[]) null));
-                }
-                ObjectSchema propertySchema = new ObjectSchema();
-                if (resourceOAS.getComponents().getSchemas().containsKey(type.getCode())) {
-                    //schema object available, add ref
-                    propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + type.getCode());
-                } else if (APIDefinitionConstants.DATA_TYPE_BACKBONE.equals(type.getCode())) {
-                    propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + elementName);
-                } else {
-                    String oasDataType = OASGenUtils.mapToOASDataType(
-                            type.getCode().substring(type.getCode().lastIndexOf(".") + 1));
-                    propertySchema.setType(oasDataType);
-                    propertySchema.setPattern(OASGenUtils.getRegexForDataType(oasDataType));
-                }
-                propertySchema.setDescription(element.getDefinition());
-                propertySchemaMap.put(elementName.toString(), propertySchema);
-                if (element.getMin() != 0) {
-                    requiredElementsCollector.add(elementName.toString());
-                }
+                objectSchema.setProperties(propertySchemaMap);
+                allOfSchema.addAllOfItem(objectSchema);
+                List<String> requiredElements = new ArrayList<>(requiredElementsCollector);
+                allOfSchema.setRequired(requiredElements);
+                resourceOAS.getComponents().addSchemas(structureDefinition.getType(), allOfSchema);
+            } catch (Exception e) {
+                throw new CodeGenException("Error occurred while generating OAS definition for structure definition: "
+                        + structureDefinition.getType() + "element: " + element.getId(), e);
             }
-            objectSchema.setProperties(propertySchemaMap);
-            allOfSchema.addAllOfItem(objectSchema);
-            List<String> requiredElements = new ArrayList<>(requiredElementsCollector);
-            allOfSchema.setRequired(requiredElements);
-            resourceOAS.getComponents().addSchemas(structureDefinition.getType(), allOfSchema);
         }
         return resourceOAS;
     }
