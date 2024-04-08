@@ -440,7 +440,7 @@ public class FHIRSpecParser extends AbstractSpecParser {
      */
     private void populateCommonSearchParameters() throws CodeGenException {
         InputStream searchParamsStream = FHIRSpecParser.class.getClassLoader().getResourceAsStream(
-                "profiles" + File.separator + "all-search-parameters.json");
+                "profiles/all-search-parameters.json");
         LOG.info("Loading international search parameters");
         Bundle paramsBundle = (Bundle) parseDefinition(searchParamsStream);
 
