@@ -93,7 +93,7 @@ public class OASGenerator {
     private void populateFhirOASBaseStructure() throws IOException {
         fhirOASBaseStructure = new OpenAPI();
         try (InputStream inputStream = FHIRTool.class.getClassLoader().getResourceAsStream(
-                "api-defs" + File.separator + "oas-static-content.yaml")) {
+                "api-defs/oas-static-content.yaml")) {
             if (inputStream != null) {
                 String parsedYamlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 OpenAPI staticOASContent = new OpenAPIV3Parser().readContents(parsedYamlContent).getOpenAPI();
