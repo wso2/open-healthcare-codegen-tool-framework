@@ -258,8 +258,6 @@ public class OASGenerator {
                     MediaType searchMediaType = new MediaType();
                     Schema searchSchema = new Schema();
                     searchSchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
-                    operation.addParametersItem(OASGenUtils.generateParameter(
-                            "id", "logical identifier", "string", "path", true));
                     searchSchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + "Bundle");
                     searchMediaType.setSchema(searchSchema);
                     searchSuccessContent.addMediaType(APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, searchMediaType);
@@ -313,6 +311,8 @@ public class OASGenerator {
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     patchResponses.addApiResponse("200", patchSuccessResponse);
                     operation.setResponses(patchResponses);
+                    operation.addParametersItem(OASGenUtils.generateParameter(
+                            "id", "logical identifier", "string", "path", true));
                     idPath.setPatch(operation);
                     break;
                 case "delete":
