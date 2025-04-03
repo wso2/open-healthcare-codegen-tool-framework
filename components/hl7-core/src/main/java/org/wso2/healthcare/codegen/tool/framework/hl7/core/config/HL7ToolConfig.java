@@ -49,7 +49,7 @@ public class HL7ToolConfig extends AbstractToolConfig {
                     JsonObject hl7SpecSchema = hl7SpecSchemaConfig.get(i).getAsJsonObject();
                     String hl7SpecSchemaName = hl7SpecSchema.get("name").getAsString();
                     String hl7SpecSchemaVersion = hl7SpecSchema.get("version").getAsString();
-                    if (StringUtils.isNotBlank(hl7SpecSchemaName)) {
+                    if (StringUtils.isNotEmpty(hl7SpecSchemaName)) {
                         HL7SpecSchemaConfig hl7SpecSchemaConfigObj = new HL7SpecSchemaConfig(hl7SpecSchemaName,
                                 hl7SpecSchemaVersion);
                         hl7SpecSchemaConfigObj.setEnable(hl7SpecSchema.get("enable").getAsBoolean());

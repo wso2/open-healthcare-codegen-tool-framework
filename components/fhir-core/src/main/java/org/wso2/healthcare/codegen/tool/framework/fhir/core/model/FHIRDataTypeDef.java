@@ -73,7 +73,7 @@ public class FHIRDataTypeDef implements SpecModel {
      */
     public CardinalityTypes getMaxCardinalityType(String fhirPath) {
         String maxCardinality = this.getMaxCardinality(fhirPath);
-        if (StringUtils.isNotBlank(maxCardinality)) {
+        if (StringUtils.isNotEmpty(maxCardinality)) {
             return CardinalityTypes.fromValue("max", maxCardinality);
         }
         return CardinalityTypes.INVALID;
@@ -103,7 +103,7 @@ public class FHIRDataTypeDef implements SpecModel {
      */
     public CardinalityTypes getMinCardinalityType(String fhirPath) {
         String minCardinality = this.getMinCardinality(fhirPath);
-        if (StringUtils.isNotBlank(minCardinality)) {
+        if (StringUtils.isNotEmpty(minCardinality)) {
             return CardinalityTypes.fromValue("min", minCardinality);
         }
         return CardinalityTypes.INVALID;
