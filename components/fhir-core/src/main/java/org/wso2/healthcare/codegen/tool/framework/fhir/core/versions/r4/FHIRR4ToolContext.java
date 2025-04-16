@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, WSO2 LLC. (http://www.wso2.org).
+ * Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,35 +16,40 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4;
 
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
-import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.AbstractFHIRToolContext;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
 
 /**
- * Context for FHIR tools.
+ * Context for FHIR R4 tools.
  */
-public class FHIRToolContext extends AbstractToolContext {
+public class FHIRR4ToolContext extends AbstractFHIRToolContext {
 
     private FHIRToolConfig config;
     private FHIRSpecificationData specificationData;
 
-    protected void setConfig(ToolConfig toolConfig) {
-        this.config = (FHIRToolConfig) toolConfig;
-    }
-
+    @Override
     public FHIRToolConfig getConfig() {
         return config;
     }
 
+    @Override
+    protected void setConfig(ToolConfig toolConfig) {
+        this.config = (FHIRToolConfig) toolConfig;
+    }
+
+    @Override
     public FHIRSpecificationData getSpecificationData() {
         return specificationData;
     }
 
-    protected void setSpecificationData(SpecificationData specificationData) {
-        this.specificationData = (FHIRSpecificationData) specificationData;
+    @Override
+    public void setSpecificationData(SpecificationData specificationData) {
+        this.specificationData = (FHIRR4SpecificationData) specificationData;
     }
 }
