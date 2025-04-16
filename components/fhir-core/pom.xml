@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.wso2.healthcare.codegen.tool.framework</groupId>
         <artifactId>open-healthcare-codegen-tool-framework</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>fhir-core</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.3</version>
 
     <dependencies>
         <!-- Open healthcare tool framework commons -->
@@ -51,8 +51,12 @@
             <artifactId>hapi-fhir-structures-r4</artifactId>
         </dependency>
         <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r5</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
+            <artifactId>velocity-engine-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -61,6 +65,10 @@
         <dependency>
             <groupId>io.swagger.parser.v3</groupId>
             <artifactId>swagger-parser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
     </dependencies>
 

@@ -23,9 +23,6 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinit
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * This class holds data model for FHIR implementation guide related information.
- */
 public class FHIRImplementationGuide {
     private String name;
     private String id;

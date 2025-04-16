@@ -15,30 +15,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.oas;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import org.hl7.fhir.r4.model.SearchParameter;
 
 import java.util.Set;
 
 /**
- * Utility class for OAS generation.
+ * Parent Utility class for OAS generation.
  */
 public class OASGenUtils {
-
     /**
      * Maps FHIR data type to OAS data type.
      *
      * @param fhirDataType FHIR data type
      * @return Mapped FHIR data type
      */
-    protected static String mapToOASDataType(String fhirDataType) {
+    public static String mapToOASDataType(String fhirDataType) {
         switch (fhirDataType) {
             case "object":
                 return "object";
@@ -100,7 +98,7 @@ public class OASGenUtils {
      * @param isRequired  is required
      * @return OAS parameter
      */
-    protected static Parameter generateParameter(String paramName, String description, String schemaType,
+    public static Parameter generateParameter(String paramName, String description, String schemaType,
                                                  String in, boolean isRequired) {
         Parameter parameter = new Parameter();
         parameter.setName(paramName);
@@ -118,24 +116,6 @@ public class OASGenUtils {
             parameter.addExtension("x-wso2-oh-fhirType", schemaType);
         }
         return parameter;
-    }
-
-    /**
-     * Checks whether the parameter is already added to the operation.
-     *
-     * @param param     search parameter
-     * @param operation OAS operation
-     * @return true if parameter is added
-     */
-    protected static boolean isAdded(SearchParameter param, Operation operation) {
-        if (operation.getParameters() != null) {
-            for (Parameter parameter : operation.getParameters()) {
-                if (parameter.getName().equals(param.getCode())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
