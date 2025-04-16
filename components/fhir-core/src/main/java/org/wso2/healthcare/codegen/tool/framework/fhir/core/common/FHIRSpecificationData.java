@@ -18,14 +18,11 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.common;
 
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.ElementDefinition;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRDataTypeDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,29 +30,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Data holder for parsed FHIR specification data and utilities.
- */
-public class FHIRSpecificationData implements SpecificationData {
-
-    private static final FHIRSpecificationData DATA_HOLDER_INSTANCE = new FHIRSpecificationData();
-
-    private Map<String, FHIRDataTypeDef> dataTypes;
+public abstract class FHIRSpecificationData implements SpecificationData {
+    protected Map<String, FHIRDataTypeDef> dataTypes;
+    protected Map<String, FHIRTerminologyDef> valueSets;
+    protected Map<String, FHIRTerminologyDef> codeSystems;
     private Map<String, FHIRImplementationGuide> fhirImplementationGuides;
-    private Map<String, FHIRTerminologyDef> valueSets;
-    private Map<String, FHIRTerminologyDef> codeSystems;
-    private Map<String, Map<String,Coding>> resolvedTerminologies;
     private final HashMap<String, List<FHIRSearchParamDef>> internationalSpecSearchParameters = new HashMap<>();
 
-    public static FHIRSpecificationData getDataHolderInstance() {
-        return DATA_HOLDER_INSTANCE;
-    }
-
-    public FHIRSpecificationData() {
-        dataTypes = new HashMap<>();
-        fhirImplementationGuides = new HashMap<>();
-        valueSets = new HashMap<>();
-        codeSystems = new HashMap<>();
+    public FHIRSpecificationData (){
+        this.dataTypes = new HashMap<>();
+        this.fhirImplementationGuides = new HashMap<>();
+        this.valueSets = new HashMap<>();
+        this.codeSystems = new HashMap<>();
     }
 
     public Map<String, FHIRDataTypeDef> getDataTypes() {
@@ -94,6 +80,7 @@ public class FHIRSpecificationData implements SpecificationData {
         this.valueSets = valueSets;
     }
 
+
     public void addCodeSystem(String id, FHIRTerminologyDef terminologyDef) {
         this.codeSystems.putIfAbsent(id, terminologyDef);
     }
@@ -104,27 +91,6 @@ public class FHIRSpecificationData implements SpecificationData {
 
     public void setCodeSystems(Map<String, FHIRTerminologyDef> codeSystems) {
         this.codeSystems = codeSystems;
-    }
-
-    public void setTerminologies() {
-        this.resolvedTerminologies = FHIRSpecUtils.resolveTerminology(this.valueSets, this.codeSystems);
-    }
-
-    public Map<String, Map<String,Coding>> getTerminologies() {
-        return resolvedTerminologies;
-    }
-
-    public boolean isPrimitiveDataType(ElementDefinition elementDefinition) {
-        if (!FHIRSpecUtils.isMultiDataType(elementDefinition)) {
-            String typeCode = FHIRSpecUtils.getTypeCodeOfElementDef(elementDefinition);
-            FHIRDataTypeDef dataTypeDef = dataTypes.get(typeCode);
-            return dataTypeDef != null && DefKind.PRIMARY_TYPE.equals(dataTypeDef.getKind());
-        }
-        return false;
-    }
-
-    public boolean isMultiDatatype(ElementDefinition elementDefinition) {
-        return FHIRSpecUtils.isMultiDataType(elementDefinition);
     }
 
     public void addInternationalSearchParameter(String resourceType, FHIRSearchParamDef searchParameter) {

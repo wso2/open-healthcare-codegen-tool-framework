@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class holds data model for FHIR implementation guide related information.
+  * This class holds data model for FHIR implementation guide related information.
  */
 public class FHIRImplementationGuide {
     private String name;
