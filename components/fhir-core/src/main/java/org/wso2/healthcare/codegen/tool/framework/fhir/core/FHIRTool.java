@@ -44,15 +44,18 @@ public class FHIRTool extends AbstractTool {
     public static final String BASE_OAS_MODEL_PROPERTY = "baseOAS";
     private FHIRToolContext toolContext;
     private Map<String, Tool> toolImplementations;
+    private static String fhirVersion = "";
 
-    public FHIRTool() {
+    public FHIRTool(String fhirVersion) {
         toolImplementations = new HashMap<>();
+        FHIRTool.fhirVersion = fhirVersion;
     }
 
     public void initialize(ToolConfig toolConfig) throws CodeGenException {
         toolContext = new FHIRToolContext();
         toolContext.setConfig(toolConfig);
-        FHIRSpecParser specParser = new FHIRSpecParser();
+
+        FHIRSpecParser specParser = new FHIRSpecParser(fhirVersion);
         specParser.parse(toolConfig);
         toolContext.setSpecificationData(FHIRSpecificationData.getDataHolderInstance());
     }

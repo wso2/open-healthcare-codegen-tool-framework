@@ -83,6 +83,11 @@
                 <artifactId>hapi-fhir-structures-r4</artifactId>
                 <version>${hapi.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-structures-r5</artifactId>
+                <version>${hapi.version}</version>
+            </dependency>
 
             <!-- OpenAPI related -->
             <dependency>

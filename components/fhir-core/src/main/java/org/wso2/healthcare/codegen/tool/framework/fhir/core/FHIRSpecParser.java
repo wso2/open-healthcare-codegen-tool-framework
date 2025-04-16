@@ -67,13 +67,29 @@ import java.util.regex.Pattern;
  */
 public class FHIRSpecParser extends AbstractSpecParser {
 
-    private static final FhirContext CTX = FhirContext.forR4();
+    private static String fhirVersion = "";
+    private static FhirContext CTX = null;
 
     private static final Log LOG = LogFactory.getLog(FHIRSpecParser.class);
 
     // Create a FilenameFilter to filter JSON files
     private static final FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
 
+    public FHIRSpecParser(String fhirVersion){
+        if(fhirVersion.equalsIgnoreCase("r4")){
+            FHIRSpecParser.fhirVersion = "r4";
+            CTX = FhirContext.forR4();
+        }
+
+        else if(fhirVersion.equalsIgnoreCase("r5")){
+            FHIRSpecParser.fhirVersion = "r5";
+            CTX = FhirContext.forR5();
+        }
+
+        else{
+            LOG.error("Invalid FHIR version provided. Supported versions are R4 and R5.");
+        }
+    }
     @Override
     public void parse(ToolConfig toolConfig) {
 
@@ -84,9 +100,11 @@ public class FHIRSpecParser extends AbstractSpecParser {
         }
 
         Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
+
         // Create a FilenameFilter to filter JSON files
         FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
         populateBaseDataTypes();
+
         for (String igName : igConfigs.keySet()) {
             parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath());
         }
