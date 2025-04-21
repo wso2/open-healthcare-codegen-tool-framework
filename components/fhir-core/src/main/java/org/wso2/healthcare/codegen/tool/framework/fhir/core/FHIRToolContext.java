@@ -21,30 +21,28 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
 
 /**
- * Context for FHIR tools.
+ * Generic Context for FHIR tools across different versions (R4, R5)
  */
+
 public class FHIRToolContext extends AbstractToolContext {
 
-    private FHIRToolConfig config;
-    private FHIRSpecificationData specificationData;
+    @Override
+    public ToolConfig getConfig() {
+        return null;
+    }
 
     protected void setConfig(ToolConfig toolConfig) {
-        this.config = (FHIRToolConfig) toolConfig;
+
     }
 
-    public FHIRToolConfig getConfig() {
-        return config;
-    }
-
-    public FHIRSpecificationData getSpecificationData() {
-        return specificationData;
+    @Override
+    public SpecificationData getSpecificationData() {
+        return null;
     }
 
     protected void setSpecificationData(SpecificationData specificationData) {
-        this.specificationData = (FHIRSpecificationData) specificationData;
+
     }
 }
