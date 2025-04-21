@@ -16,12 +16,12 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.oas;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas;
 
 /**
  * Store the Constants needed to API definition Generator.
  */
-public class APIDefinitionConstants {
+public class R4APIDefinitionConstants {
 
     public static final String CONTENT_TYPE_FHIR_JSON = "application/fhir+json";
     public static final String CONTENT_TYPE_FHIR_XML = "application/fhir+xml";

@@ -16,33 +16,30 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.config;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.consensys.cava.toml.TomlTable;
 
 import java.util.Properties;
 
 /**
- * FHIR implementation guide related tool configs.
+ * Data type configuration.
  */
-public class IGConfig {
+public class R4DataTypeConfig {
 
     private String name;
-    private String code;
-    private String dirPath;
+    private JsonArray childFields;
     private Properties properties;
 
-    public IGConfig(JsonObject config) {
+    public R4DataTypeConfig(JsonObject config) {
         this.setName(config.getAsJsonPrimitive("name").getAsString());
-        this.setCode(config.getAsJsonPrimitive("code").getAsString());
-        this.setDirPath(config.getAsJsonPrimitive("dirPath").getAsString());
+        this.setChildFields(config.getAsJsonArray("childProperties"));
     }
 
-    public IGConfig(TomlTable config) {
+    public R4DataTypeConfig(TomlTable config) {
         this.setName(config.getString("name"));
-        this.setCode(config.getString("code"));
-        this.setDirPath(config.getString("dir_path"));
     }
 
     public String getName() {
@@ -53,12 +50,12 @@ public class IGConfig {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public JsonArray getChildFields() {
+        return childFields;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setChildFields(JsonArray childFields) {
+        this.childFields = childFields;
     }
 
     public Properties getProperties() {
@@ -67,13 +64,5 @@ public class IGConfig {
 
     public void setProperties(Properties properties) {
         this.properties = properties;
-    }
-
-    public String getDirPath() {
-        return dirPath;
-    }
-
-    public void setDirPath(String dirPath) {
-        this.dirPath = dirPath;
     }
 }

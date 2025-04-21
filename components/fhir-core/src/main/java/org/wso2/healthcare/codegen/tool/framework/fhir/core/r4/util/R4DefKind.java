@@ -16,13 +16,13 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.util;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util;
 
 /**
  * Represents FHIR definition type kind value represented in data type structured definition. For mismatching values it
  * will represent as 'invalid'.
  */
-public enum DefKind {
+public enum R4DefKind {
 
     RESOURCE("resource"),
     LOGICAL("logical"),
@@ -32,12 +32,12 @@ public enum DefKind {
 
     private final String code;
 
-    DefKind(String code) {
+    R4DefKind(String code) {
         this.code = code;
     }
 
-    public static DefKind fromCode(String code) {
-        for (DefKind value : DefKind.values()) {
+    public static R4DefKind fromCode(String code) {
+        for (R4DefKind value : R4DefKind.values()) {
             if (code.equals(value.code)) {
                 return value;
             }

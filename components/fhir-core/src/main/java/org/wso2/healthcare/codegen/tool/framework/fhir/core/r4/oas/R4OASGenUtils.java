@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.oas;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * Utility class for OAS generation.
  */
-public class OASGenUtils {
+public class R4OASGenUtils {
 
     /**
      * Maps FHIR data type to OAS data type.

@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.oas;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -45,11 +45,10 @@ import org.hl7.fhir.r4.model.ElementDefinition;
 import org.hl7.fhir.r4.model.StructureDefinition;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRTool;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinition;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4SearchParamDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.model.R4APIDefinition;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -63,15 +62,15 @@ import java.util.Set;
 /**
  * This class generates OAS definitions for FHIR resources.
  */
-public class OASGenerator {
+public class R4OASGenerator {
 
-    private static final Log LOG = LogFactory.getLog(OASGenerator.class);
+    private static final Log LOG = LogFactory.getLog(R4OASGenerator.class);
 
-    private static final OASGenerator OAS_GENERATOR_INSTANCE = new OASGenerator();
+    private static final R4OASGenerator OAS_GENERATOR_INSTANCE = new R4OASGenerator();
 
     private OpenAPI fhirOASBaseStructure;
 
-    private OASGenerator() {
+    private R4OASGenerator() {
         try {
             populateFhirOASBaseStructure();
         } catch (IOException e) {
@@ -79,7 +78,7 @@ public class OASGenerator {
         }
     }
 
-    public static OASGenerator getInstance() {
+    public static R4OASGenerator getInstance() {
         return OAS_GENERATOR_INSTANCE;
     }
 
@@ -93,7 +92,7 @@ public class OASGenerator {
     private void populateFhirOASBaseStructure() throws IOException {
         fhirOASBaseStructure = new OpenAPI();
         try (InputStream inputStream = FHIRTool.class.getClassLoader().getResourceAsStream(
-                "api-defs/oas-static-content.yaml")) {
+                "r4/api-defs/oas-static-content.yaml")) {
             if (inputStream != null) {
                 String parsedYamlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 OpenAPI staticOASContent = new OpenAPIV3Parser().readContents(parsedYamlContent).getOpenAPI();
@@ -113,7 +112,7 @@ public class OASGenerator {
      * @param structureDefinition FHIR resource definition
      * @return Generated OAS definition
      */
-    public OpenAPI generateResourceSchema(APIDefinition apiDefinition, StructureDefinition structureDefinition)
+    public OpenAPI generateResourceSchema(R4APIDefinition apiDefinition, StructureDefinition structureDefinition)
             throws CodeGenException {
         OpenAPI resourceOAS = new OpenAPI();
         resourceOAS.setComponents(fhirOASBaseStructure.getComponents());
@@ -129,7 +128,7 @@ public class OASGenerator {
                 ComposedSchema allOfSchema = new ComposedSchema();
                 Map<String, Schema> propertySchemaMap = new HashMap<>();
                 Schema parentReference = new Schema();
-                parentReference.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + "DomainResource");
+                parentReference.$ref(R4APIDefinitionConstants.OAS_REF_SCHEMAS + "DomainResource");
                 allOfSchema.addAllOfItem(parentReference);
                 for (ElementDefinition.TypeRefComponent type : element.getType()) {
                     StringBuilder elementName;
@@ -149,14 +148,14 @@ public class OASGenerator {
                     ObjectSchema propertySchema = new ObjectSchema();
                     if (resourceOAS.getComponents().getSchemas().containsKey(type.getCode())) {
                         //schema object available, add ref
-                        propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + type.getCode());
-                    } else if (APIDefinitionConstants.DATA_TYPE_BACKBONE.equals(type.getCode())) {
-                        propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + elementName);
+                        propertySchema.$ref(R4APIDefinitionConstants.OAS_REF_SCHEMAS + type.getCode());
+                    } else if (R4APIDefinitionConstants.DATA_TYPE_BACKBONE.equals(type.getCode())) {
+                        propertySchema.$ref(R4APIDefinitionConstants.OAS_REF_SCHEMAS + elementName);
                     } else {
-                        String oasDataType = OASGenUtils.mapToOASDataType(
+                        String oasDataType = R4OASGenUtils.mapToOASDataType(
                                 type.getCode().substring(type.getCode().lastIndexOf(".") + 1));
                         propertySchema.setType(oasDataType);
-                        propertySchema.setPattern(OASGenUtils.getRegexForDataType(oasDataType));
+                        propertySchema.setPattern(R4OASGenUtils.getRegexForDataType(oasDataType));
                     }
                     propertySchema.setDescription(element.getDefinition());
                     propertySchemaMap.put(elementName.toString(), propertySchema);
@@ -182,7 +181,7 @@ public class OASGenerator {
      *
      * @param apiDefinition API definition object
      */
-    public void populateOASInfo(APIDefinition apiDefinition) {
+    public void populateOASInfo(R4APIDefinition apiDefinition) {
 
         Info info = new Info();
         info.setTitle(apiDefinition.getResourceType());
@@ -205,7 +204,7 @@ public class OASGenerator {
      *
      * @param apiDefinition API definition object
      */
-    private void populateOASPaths(APIDefinition apiDefinition) {
+    private void populateOASPaths(R4APIDefinition apiDefinition) {
 
         Paths paths = new Paths();
         Map<String, String> interactions = new HashMap<>() {{
@@ -235,11 +234,11 @@ public class OASGenerator {
                     Content successContent = new Content();
                     MediaType mediaType = new MediaType();
                     Schema schema = new Schema();
-                    schema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
-                    operation.addParametersItem(OASGenUtils.generateParameter(
+                    schema.$ref(R4APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
+                    operation.addParametersItem(R4OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
                     mediaType.setSchema(schema);
-                    successContent.addMediaType(APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, mediaType);
+                    successContent.addMediaType(R4APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, mediaType);
                     readSuccessResponse.setContent(successContent);
                     getResponses.addApiResponse("200", readSuccessResponse);
                     operation.setResponses(getResponses);
@@ -257,10 +256,10 @@ public class OASGenerator {
                     Content searchSuccessContent = new Content();
                     MediaType searchMediaType = new MediaType();
                     Schema searchSchema = new Schema();
-                    searchSchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
-                    searchSchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + "Bundle");
+                    searchSchema.$ref(R4APIDefinitionConstants.OAS_REF_SCHEMAS + apiDefinition.getResourceType());
+                    searchSchema.$ref(R4APIDefinitionConstants.OAS_REF_SCHEMAS + "Bundle");
                     searchMediaType.setSchema(searchSchema);
-                    searchSuccessContent.addMediaType(APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, searchMediaType);
+                    searchSuccessContent.addMediaType(R4APIDefinitionConstants.CONTENT_TYPE_FHIR_JSON, searchMediaType);
                     searchSuccessResponse.setContent(searchSuccessContent);
                     searchResponses.addApiResponse("200", searchSuccessResponse);
                     operation.setResponses(searchResponses);
@@ -274,7 +273,7 @@ public class OASGenerator {
                     ApiResponses postResponses = new ApiResponses();
                     ApiResponse createSuccessResponse = new ApiResponse();
                     RequestBody requestBody = new RequestBody();
-                    requestBody.$ref(APIDefinitionConstants.OAS_REF_REQUEST_BODIES + apiDefinition.getResourceType());
+                    requestBody.$ref(R4APIDefinitionConstants.OAS_REF_REQUEST_BODIES + apiDefinition.getResourceType());
                     createSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     postResponses.addApiResponse("201", createSuccessResponse);
@@ -289,12 +288,12 @@ public class OASGenerator {
                     ApiResponses putResponses = new ApiResponses();
                     ApiResponse updateSuccessResponse = new ApiResponse();
                     RequestBody putRequestBody = new RequestBody();
-                    putRequestBody.$ref(APIDefinitionConstants.OAS_REF_REQUEST_BODIES + apiDefinition.getResourceType());
+                    putRequestBody.$ref(R4APIDefinitionConstants.OAS_REF_REQUEST_BODIES + apiDefinition.getResourceType());
                     updateSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     putResponses.addApiResponse("200", updateSuccessResponse);
                     operation.setResponses(putResponses);
-                    operation.addParametersItem(OASGenUtils.generateParameter(
+                    operation.addParametersItem(R4OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
                     idPath.setPut(operation);
                     break;
@@ -306,12 +305,12 @@ public class OASGenerator {
                     ApiResponses patchResponses = new ApiResponses();
                     ApiResponse patchSuccessResponse = new ApiResponse();
                     RequestBody patchRequestBody = new RequestBody();
-                    patchRequestBody.$ref(APIDefinitionConstants.OAS_REF_REQUEST_BODIES + apiDefinition.getResourceType());
+                    patchRequestBody.$ref(R4APIDefinitionConstants.OAS_REF_REQUEST_BODIES + apiDefinition.getResourceType());
                     patchSuccessResponse.setDescription(
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     patchResponses.addApiResponse("200", patchSuccessResponse);
                     operation.setResponses(patchResponses);
-                    operation.addParametersItem(OASGenUtils.generateParameter(
+                    operation.addParametersItem(R4OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
                     idPath.setPatch(operation);
                     break;
@@ -326,7 +325,7 @@ public class OASGenerator {
                             interaction.getKey() + " " + apiDefinition.getResourceType() + " operation successful");
                     deleteResponses.addApiResponse("204", deleteSuccessResponse);
                     operation.setResponses(deleteResponses);
-                    operation.addParametersItem(OASGenUtils.generateParameter(
+                    operation.addParametersItem(R4OASGenUtils.generateParameter(
                             "id", "logical identifier", "string", "path", true));
                     idPath.setDelete(operation);
                     break;
@@ -342,13 +341,13 @@ public class OASGenerator {
      *
      * @param apiDefinition API definition object
      */
-    private void populateOASInternalValues(APIDefinition apiDefinition) {
-        apiDefinition.getOpenAPI().getInfo().setDescription(OASGenUtils.generateDescription(
+    private void populateOASInternalValues(R4APIDefinition apiDefinition) {
+        apiDefinition.getOpenAPI().getInfo().setDescription(R4OASGenUtils.generateDescription(
                 apiDefinition.getResourceType(), apiDefinition.getSupportedProfiles()));
         Tag tag = new Tag();
         tag.setName(apiDefinition.getResourceType());
         Tag fhirVersionTag = new Tag();
-        fhirVersionTag.setName(APIDefinitionConstants.FHIR_VERSION);
+        fhirVersionTag.setName(R4APIDefinitionConstants.FHIR_VERSION);
         for (String igName : apiDefinition.getSupportedProfiles()) {
             Tag igTag = new Tag();
             igTag.setName(igName);
@@ -358,23 +357,23 @@ public class OASGenerator {
         apiDefinition.getOpenAPI().addTagsItem(fhirVersionTag);
 
         Map<String, Object> extensions = new HashMap<>();
-        extensions.put(APIDefinitionConstants.OAS_EXTENSION_OH_FHIR_RESOURCE_TYPE, apiDefinition.getResourceType());
-        extensions.put(APIDefinitionConstants.OAS_EXTENSION_OH_FHIR_PROFILE, apiDefinition.getSupportedProfiles());
+        extensions.put(R4APIDefinitionConstants.OAS_EXTENSION_OH_FHIR_RESOURCE_TYPE, apiDefinition.getResourceType());
+        extensions.put(R4APIDefinitionConstants.OAS_EXTENSION_OH_FHIR_PROFILE, apiDefinition.getSupportedProfiles());
         apiDefinition.getOpenAPI().setExtensions(extensions);
 
         if (apiDefinition.getOpenAPI().getPaths().get("/") != null) {
             Operation rootGet = apiDefinition.getOpenAPI().getPaths().get("/").getGet();
             if (rootGet != null) {
-                for (FHIRSearchParamDef searchParamDef : FHIRSpecificationData.getDataHolderInstance().getInternationalSearchParameters(
+                for (FHIRR4SearchParamDef searchParamDef : FHIRR4SpecificationData.getDataHolderInstance().getInternationalSearchParameters(
                         apiDefinition.getResourceType())) {
-                    if (!OASGenUtils.isAdded(searchParamDef.getSearchParameter(), rootGet)) {
-                        rootGet.addParametersItem(OASGenUtils.generateParameter(
+                    if (!R4OASGenUtils.isAdded(searchParamDef.getSearchParameter(), rootGet)) {
+                        rootGet.addParametersItem(R4OASGenUtils.generateParameter(
                                 searchParamDef.getSearchParameter().getCode(), searchParamDef.getSearchParameter().getDescription(),
                                 searchParamDef.getSearchParameter().getType().toCode(), "query", false));
                     }
                 }
                 for (String commonParam : apiDefinition.getOpenAPI().getComponents().getParameters().keySet()) {
-                    rootGet.addParametersItem(new Parameter().$ref(APIDefinitionConstants.OAS_REF_PARAMETERS + commonParam));
+                    rootGet.addParametersItem(new Parameter().$ref(R4APIDefinitionConstants.OAS_REF_PARAMETERS + commonParam));
                 }
             }
         }

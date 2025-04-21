@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.model;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -25,20 +25,20 @@ import java.util.Set;
 /**
  * This class holds the data model for API definition.
  */
-public class APIDefinition {
+public class R4APIDefinition {
 
     private OpenAPI openAPI;
     private String resourceType;
     private Set<String> supportedProfiles;
     private Set<String> supportedIgs;
 
-    public APIDefinition() {
+    public R4APIDefinition() {
         this.openAPI = new OpenAPI();
         this.supportedProfiles = new HashSet<>();
         this.supportedIgs = new HashSet<>();
     }
 
-    public APIDefinition(OpenAPI openAPI) {
+    public R4APIDefinition(OpenAPI openAPI) {
         this.openAPI = openAPI;
     }
 

@@ -16,30 +16,33 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.config;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.consensys.cava.toml.TomlTable;
 
 import java.util.Properties;
 
 /**
- * Data type configuration.
+ * FHIR implementation guide related tool configs.
  */
-public class DataTypeConfig {
+public class R4IGConfig {
 
     private String name;
-    private JsonArray childFields;
+    private String code;
+    private String dirPath;
     private Properties properties;
 
-    public DataTypeConfig(JsonObject config) {
+    public R4IGConfig(JsonObject config) {
         this.setName(config.getAsJsonPrimitive("name").getAsString());
-        this.setChildFields(config.getAsJsonArray("childProperties"));
+        this.setCode(config.getAsJsonPrimitive("code").getAsString());
+        this.setDirPath(config.getAsJsonPrimitive("dirPath").getAsString());
     }
 
-    public DataTypeConfig(TomlTable config) {
+    public R4IGConfig(TomlTable config) {
         this.setName(config.getString("name"));
+        this.setCode(config.getString("code"));
+        this.setDirPath(config.getString("dir_path"));
     }
 
     public String getName() {
@@ -50,12 +53,12 @@ public class DataTypeConfig {
         this.name = name;
     }
 
-    public JsonArray getChildFields() {
-        return childFields;
+    public String getCode() {
+        return code;
     }
 
-    public void setChildFields(JsonArray childFields) {
-        this.childFields = childFields;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Properties getProperties() {
@@ -64,5 +67,13 @@ public class DataTypeConfig {
 
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public String getDirPath() {
+        return dirPath;
+    }
+
+    public void setDirPath(String dirPath) {
+        this.dirPath = dirPath;
     }
 }

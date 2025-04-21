@@ -16,14 +16,14 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.util;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util;
 
 /**
  * Represents structure definition elements expansion types.
  * "SNAPSHOT": This type will have all the elements included with the base definition elements
  * "DIFFERENTIAL": This type will have the elements differentiated with the base definition elements
  */
-public enum ElementExpansionType {
+public enum R4ElementExpansionType {
     SNAPSHOT,
     DIFFERENTIAL;
 }

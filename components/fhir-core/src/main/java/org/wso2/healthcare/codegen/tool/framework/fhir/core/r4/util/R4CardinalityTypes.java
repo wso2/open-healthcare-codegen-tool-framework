@@ -16,11 +16,11 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.util;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util;
 
 import java.util.regex.Pattern;
 
-public enum CardinalityTypes {
+public enum R4CardinalityTypes {
     MAX_UNLIMITED("unlimited"),
     MAX_FINITE("finite"),
     REQUIRED("required"),
@@ -29,25 +29,25 @@ public enum CardinalityTypes {
 
     private final String cardinalityStr;
 
-    CardinalityTypes(String cardinalityStr) {
+    R4CardinalityTypes(String cardinalityStr) {
         this.cardinalityStr = cardinalityStr;
     }
 
-    public static CardinalityTypes fromValue(String type, String code) {
+    public static R4CardinalityTypes fromValue(String type, String code) {
         if (code.equals("*")) {
-            return CardinalityTypes.MAX_UNLIMITED;
+            return R4CardinalityTypes.MAX_UNLIMITED;
         } else if (code.equals("0")) {
-            return CardinalityTypes.OPTIONAL;
+            return R4CardinalityTypes.OPTIONAL;
         } else if (Pattern.matches("([1-9][0-9]*)", code)) {
             switch (type) {
                 case "min":
-                    return CardinalityTypes.REQUIRED;
+                    return R4CardinalityTypes.REQUIRED;
                 case "max":
-                    return CardinalityTypes.MAX_FINITE;
+                    return R4CardinalityTypes.MAX_FINITE;
                 default:
-                    return CardinalityTypes.INVALID;
+                    return R4CardinalityTypes.INVALID;
             }
         }
-        return CardinalityTypes.INVALID;
+        return R4CardinalityTypes.INVALID;
     }
 }
