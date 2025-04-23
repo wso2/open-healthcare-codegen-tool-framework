@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -45,9 +45,9 @@ import org.hl7.fhir.r4.model.ElementDefinition;
 import org.hl7.fhir.r4.model.StructureDefinition;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRTool;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4SearchParamDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.model.R4APIDefinition;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4SearchParamDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas.model.R4APIDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;

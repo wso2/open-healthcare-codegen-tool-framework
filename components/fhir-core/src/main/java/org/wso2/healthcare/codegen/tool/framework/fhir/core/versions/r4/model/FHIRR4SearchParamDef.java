@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model;
 
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.SearchParameter;

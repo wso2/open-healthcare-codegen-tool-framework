@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

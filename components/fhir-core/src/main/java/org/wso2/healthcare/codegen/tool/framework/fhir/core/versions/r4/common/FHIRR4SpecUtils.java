@@ -16,11 +16,11 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common;
 
 import org.hl7.fhir.r4.model.*;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecUtils;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4TerminologyDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4TerminologyDef;
 
 import java.util.ArrayList;
 import java.util.HashMap;

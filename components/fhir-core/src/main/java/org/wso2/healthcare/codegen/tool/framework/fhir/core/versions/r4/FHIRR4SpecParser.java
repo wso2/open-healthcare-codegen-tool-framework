@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
@@ -40,19 +40,19 @@ import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenExcep
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRSpecParser;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRResourceDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecUtils;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config.R4FHIRToolConfig;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config.R4IGConfig;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4DataTypeDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4ImplementationGuide;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4OperationDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4ResourceDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4SearchParamDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4TerminologyDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.R4OASGenerator;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.model.R4APIDefinition;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util.R4DefKind;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecUtils;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.IGConfig;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4DataTypeDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4ImplementationGuide;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4OperationDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4ResourceDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4SearchParamDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4TerminologyDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas.R4OASGenerator;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas.model.R4APIDefinition;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util.R4DefKind;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -85,7 +85,7 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
             LOG.error("Error occurred while populating search parameters.", e);
         }
 
-        Map<String, R4IGConfig> igConfigs = ((R4FHIRToolConfig) toolConfig).getIgConfigs();
+        Map<String, IGConfig> igConfigs = ((FHIRToolConfig) toolConfig).getIgConfigs();
         // Create a FilenameFilter to filter JSON files
         FilenameFilter jsonFileFilter = (dir, name) -> name.toLowerCase().endsWith(".json");
         populateBaseDataTypes();
@@ -93,7 +93,7 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
             parseIG(toolConfig, igName, igConfigs.get(igName).getDirPath());
         }
 
-        List<String> terminologyDirs = ((R4FHIRToolConfig) toolConfig).getTerminologyDirs();
+        List<String> terminologyDirs = ((FHIRToolConfig) toolConfig).getTerminologyDirs();
         for (String terminologyDir : terminologyDirs) {
             File terminologyDirPath = new File(toolConfig.getSpecBasePath() + terminologyDir);
             if (terminologyDirPath.isDirectory()) {
@@ -133,7 +133,7 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
         }
 
         FHIRR4SpecificationData.getDataHolderInstance().setTerminologies();
-        List<String> dataTypeProfileDirs = ((R4FHIRToolConfig) toolConfig).getDataTypeProfileDirs();
+        List<String> dataTypeProfileDirs = ((FHIRToolConfig) toolConfig).getDataTypeProfileDirs();
         for (String dataTypeProfileDir : dataTypeProfileDirs) {
             File dataTypeProfileDirPath = new File(toolConfig.getSpecBasePath() + dataTypeProfileDir);
             if (dataTypeProfileDirPath.isDirectory()) {

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util;
 
 /**
  * Represents structure definition elements expansion types.

@@ -16,18 +16,18 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common;
 
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ElementDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRDataTypeDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4DataTypeDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4ImplementationGuide;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4SearchParamDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4TerminologyDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util.R4DefKind;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4DataTypeDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4ImplementationGuide;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4SearchParamDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4TerminologyDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util.R4DefKind;
 
 import java.util.ArrayList;
 import java.util.Collections;

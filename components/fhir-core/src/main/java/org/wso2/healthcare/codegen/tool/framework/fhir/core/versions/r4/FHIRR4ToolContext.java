@@ -16,31 +16,30 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4;
 
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRToolContext;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config.R4FHIRToolConfig;
 
 /**
  * Context for FHIR tools.
  */
 public class FHIRR4ToolContext extends FHIRToolContext {
 
-    private FHIRToolConfig config;
+    private org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig config;
     private FHIRSpecificationData specificationData;
 
     @Override
     protected void setConfig(ToolConfig toolConfig) {
-        this.config = (R4FHIRToolConfig) toolConfig;
+        this.config = (FHIRToolConfig) toolConfig;
     }
 
     @Override
-    public FHIRToolConfig getConfig() {
+    public org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig getConfig() {
         return config;
     }
 

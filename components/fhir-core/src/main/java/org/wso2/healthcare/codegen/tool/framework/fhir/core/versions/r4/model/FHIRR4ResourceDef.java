@@ -16,16 +16,15 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model;
 
 import org.hl7.fhir.r4.model.ElementDefinition;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.StructureDefinition;
-import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRResourceDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecUtils;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util.R4DefKind;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.util.R4ElementExpansionType;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecUtils;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util.R4DefKind;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util.R4ElementExpansionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

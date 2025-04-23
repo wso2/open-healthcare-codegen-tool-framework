@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas;
 
 /**
  * Store the Constants needed to API definition Generator.

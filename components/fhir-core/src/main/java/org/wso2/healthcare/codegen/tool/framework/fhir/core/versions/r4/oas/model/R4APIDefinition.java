@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.model;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas.model;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
