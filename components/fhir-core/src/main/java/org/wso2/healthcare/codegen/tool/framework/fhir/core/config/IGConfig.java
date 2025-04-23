@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.config;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.config;
 
 import com.google.gson.JsonObject;
 import net.consensys.cava.toml.TomlTable;
@@ -26,20 +26,20 @@ import java.util.Properties;
 /**
  * FHIR implementation guide related tool configs.
  */
-public class R4IGConfig {
+public class IGConfig {
 
     private String name;
     private String code;
     private String dirPath;
     private Properties properties;
 
-    public R4IGConfig(JsonObject config) {
+    public IGConfig(JsonObject config) {
         this.setName(config.getAsJsonPrimitive("name").getAsString());
         this.setCode(config.getAsJsonPrimitive("code").getAsString());
         this.setDirPath(config.getAsJsonPrimitive("dirPath").getAsString());
     }
 
-    public R4IGConfig(TomlTable config) {
+    public IGConfig(TomlTable config) {
         this.setName(config.getString("name"));
         this.setCode(config.getString("code"));
         this.setDirPath(config.getString("dir_path"));

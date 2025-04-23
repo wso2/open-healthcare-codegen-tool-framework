@@ -1,6 +1,6 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.FHIRR4SpecParser;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.FHIRR4SpecParser;
 
 public class FHIRSpecParserFactory {
     public static FHIRSpecParser getParser(String fhirVersion) {

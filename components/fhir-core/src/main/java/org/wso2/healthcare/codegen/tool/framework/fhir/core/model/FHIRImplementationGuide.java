@@ -1,7 +1,6 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.model.FHIRR4SearchParamDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.oas.model.R4APIDefinition;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas.model.R4APIDefinition;
 
 import java.util.Map;
 

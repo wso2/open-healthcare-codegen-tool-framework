@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.config;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -27,18 +27,18 @@ import java.util.Properties;
 /**
  * Data type configuration.
  */
-public class R4DataTypeConfig {
+public class DataTypeConfig {
 
     private String name;
     private JsonArray childFields;
     private Properties properties;
 
-    public R4DataTypeConfig(JsonObject config) {
+    public DataTypeConfig(JsonObject config) {
         this.setName(config.getAsJsonPrimitive("name").getAsString());
         this.setChildFields(config.getAsJsonArray("childProperties"));
     }
 
-    public R4DataTypeConfig(TomlTable config) {
+    public DataTypeConfig(TomlTable config) {
         this.setName(config.getString("name"));
     }
 

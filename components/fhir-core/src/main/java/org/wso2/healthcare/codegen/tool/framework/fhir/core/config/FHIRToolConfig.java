@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.config;
+package org.wso2.healthcare.codegen.tool.framework.fhir.core.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -27,10 +27,10 @@ import net.consensys.cava.toml.TomlTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.healthcare.codegen.tool.framework.commons.Constants;
+import org.wso2.healthcare.codegen.tool.framework.commons.config.AbstractToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.ConfigType;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.TomlConfigType;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,11 +40,11 @@ import java.util.Map;
 /**
  * Holds config information applicable for all the FHIR tools to be used.
  */
-public class R4FHIRToolConfig extends FHIRToolConfig {
+public class FHIRToolConfig extends AbstractToolConfig {
 
-    private static final Log LOG = LogFactory.getLog(R4FHIRToolConfig.class);
-    private final Map<String, R4IGConfig> igConfigs = new HashMap<>();
-    private final Map<String, R4DataTypeConfig> dataTypeConfigs = new HashMap<>();
+    private static final Log LOG = LogFactory.getLog(FHIRToolConfig.class);
+    private final Map<String, IGConfig> igConfigs = new HashMap<>();
+    private final Map<String, DataTypeConfig> dataTypeConfigs = new HashMap<>();
     private final List<String> dataTypeProfileDirs = new ArrayList<>();
     private final List<String> terminologyDirs = new ArrayList<>();
 
@@ -57,15 +57,15 @@ public class R4FHIRToolConfig extends FHIRToolConfig {
             JsonArray resourceProfiles = jsonConfigObj.getAsJsonArray("FHIRImplementationGuides");
             if (resourceProfiles != null) {
                 for (JsonElement resourceProfile : resourceProfiles) {
-                    R4IGConfig r4IgConfig = new R4IGConfig(resourceProfile.getAsJsonObject());
-                    igConfigs.put(r4IgConfig.getName(), r4IgConfig);
+                    IGConfig igConfig = new IGConfig(resourceProfile.getAsJsonObject());
+                    igConfigs.put(igConfig.getName(), igConfig);
                 }
             }
             JsonObject metadataConfigObj = jsonConfigObj.getAsJsonObject("metadata");
             if (metadataConfigObj != null) {
                 JsonArray dataTypeStructures = metadataConfigObj.getAsJsonArray("dataTypeStructures");
                 for (JsonElement dataTypeStructure : dataTypeStructures) {
-                    R4DataTypeConfig dataTypeConfig = new R4DataTypeConfig(dataTypeStructure.getAsJsonObject());
+                    DataTypeConfig dataTypeConfig = new DataTypeConfig(dataTypeStructure.getAsJsonObject());
                     dataTypeConfigs.put(dataTypeConfig.getName(), dataTypeConfig);
                 }
             }
@@ -88,8 +88,8 @@ public class R4FHIRToolConfig extends FHIRToolConfig {
                 List<Object> implementationGuidesList = ((TomlArray) implementationGuides).toList();
                 for (Object implementationGuide : implementationGuidesList) {
                     if (implementationGuide instanceof TomlTable) {
-                        R4IGConfig r4IgConfig = new R4IGConfig((TomlTable) implementationGuide);
-                        igConfigs.put(r4IgConfig.getName(), r4IgConfig);
+                        IGConfig igConfig = new IGConfig((TomlTable) implementationGuide);
+                        igConfigs.put(igConfig.getName(), igConfig);
                     }
                 }
             }
@@ -99,7 +99,7 @@ public class R4FHIRToolConfig extends FHIRToolConfig {
                 if (dataTypeStructures != null) {
                     List<Object> dataTypeStructuresList = dataTypeStructures.toList();
                     for (Object dataTypeStructure : dataTypeStructuresList) {
-                        R4DataTypeConfig dataTypeConfig = new R4DataTypeConfig((TomlTable) dataTypeStructure);
+                        DataTypeConfig dataTypeConfig = new DataTypeConfig((TomlTable) dataTypeStructure);
                         dataTypeConfigs.put(dataTypeConfig.getName(), dataTypeConfig);
                     }
                 }
@@ -126,18 +126,18 @@ public class R4FHIRToolConfig extends FHIRToolConfig {
     @Override
     public void overrideConfig(String jsonPath, JsonElement value) {
         if (jsonPath.equals("FHIRImplementationGuides")) {
-            R4IGConfig r4IgConfig = new R4IGConfig(value.getAsJsonObject());
-            igConfigs.put(r4IgConfig.getName(), r4IgConfig);
+            IGConfig igConfig = new IGConfig(value.getAsJsonObject());
+            igConfigs.put(igConfig.getName(), igConfig);
         } else {
             LOG.warn("Invalid config path: " + jsonPath);
         }
     }
 
-    public Map<String, R4IGConfig> getIgConfigs() {
+    public Map<String, IGConfig> getIgConfigs() {
         return igConfigs;
     }
 
-    public Map<String, R4DataTypeConfig> getDataTypeConfigs() {
+    public Map<String, DataTypeConfig> getDataTypeConfigs() {
         return dataTypeConfigs;
     }
 

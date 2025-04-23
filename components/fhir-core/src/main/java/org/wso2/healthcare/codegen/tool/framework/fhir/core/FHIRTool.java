@@ -23,8 +23,6 @@ import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractTool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.Tool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.ToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
-//import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecificationData;
-//import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.config.R4FHIRToolConfig;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.FHIRR4ToolContext;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.r4.common.FHIRR4SpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.FHIRR4ToolContext;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
 
 public class FHIRToolContextFactory {
     public static FHIRToolContext getToolContext(String fhirVersion){
