@@ -40,6 +40,7 @@ import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenExcep
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRSpecParser;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRResourceDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecUtils;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
@@ -114,7 +115,8 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
                                         fhirTerminologyDef.setUrl(codeSystem.getUrl());
                                         FHIRR4SpecificationData.getDataHolderInstance().addCodeSystem(fhirTerminologyDef.getUrl(),
                                                 fhirTerminologyDef);
-                                    } else if (terminologyType.equals("ValueSet")) {
+                                    }
+                                    else if (terminologyType.equals("ValueSet")) {
                                         ValueSet valueSet = (ValueSet) entryComponent.getResource();
                                         FHIRR4TerminologyDef FHIRR4TerminologyDef = new FHIRR4TerminologyDef();
                                         FHIRR4TerminologyDef.setTerminologyResource(valueSet);
@@ -174,37 +176,42 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
         File igDirPathFile = new File(igPath);
         if (igDirPathFile.isDirectory()) {
             File[] igProfileFiles = igDirPathFile.listFiles(jsonFileFilter);
+
             if (igProfileFiles != null) {
-                FHIRR4ImplementationGuide FHIRR4ImplementationGuide =
+                FHIRR4ImplementationGuide fhirR4ImplementationGuide =
                         (FHIRR4ImplementationGuide) FHIRR4SpecificationData.getDataHolderInstance().getFhirImplementationGuides().get(igName);
-                if (FHIRR4ImplementationGuide == null) {
-                    FHIRR4ImplementationGuide = new FHIRR4ImplementationGuide();
-                    FHIRR4ImplementationGuide.setName(igName);
-                    FHIRR4SpecificationData.getDataHolderInstance().addFhirImplementationGuide(igName,
-                            FHIRR4ImplementationGuide);
+
+                if (fhirR4ImplementationGuide == null) {
+                    fhirR4ImplementationGuide = new FHIRR4ImplementationGuide();
+                    fhirR4ImplementationGuide.setName(igName);
+                    FHIRR4SpecificationData.getDataHolderInstance().addFhirImplementationGuide(igName, fhirR4ImplementationGuide);
                 }
+
                 for (File igProfileFile : igProfileFiles) {
                     if (igProfileFile.isDirectory() || !isValidFHIRDefinition(igProfileFile)) {
                         continue;
                     }
+
                     IBaseResource parsedDef;
                     try {
                         parsedDef = parseDefinition(igProfileFile);
                         if (parsedDef instanceof StructureDefinition) {
                             StructureDefinition structureDefinition = (StructureDefinition) parsedDef;
                             String code = structureDefinition.getKind().toCode();
+
                             if ("resource".equals(code)) {
-                                FHIRR4ResourceDef FHIRR4ResourceDef = new FHIRR4ResourceDef();
-                                FHIRR4ResourceDef.setDefinition(structureDefinition);
-                                FHIRR4ResourceDef.setKind(R4DefKind.fromCode(code));
-                                FHIRR4ImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
-                                        FHIRR4ResourceDef);
+                                FHIRR4ResourceDef fhirR4ResourceDef = new FHIRR4ResourceDef();
+                                fhirR4ResourceDef.setDefinition(structureDefinition);
+                                fhirR4ResourceDef.setKind(R4DefKind.fromCode(code));
+                                fhirR4ImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
+                                        fhirR4ResourceDef);
+
                                 R4OASGenerator oasGenerator = R4OASGenerator.getInstance();
                                 R4APIDefinition apiDefinition;
-                                if (FHIRR4ImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
-                                    apiDefinition = FHIRR4ImplementationGuide.
-                                            getApiDefinitions().get(structureDefinition.getType());
-                                } else {
+                                if (fhirR4ImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
+                                    apiDefinition = fhirR4ImplementationGuide.getApiDefinitions().get(structureDefinition.getType());
+                                }
+                                else {
                                     apiDefinition = new R4APIDefinition();
                                     apiDefinition.setResourceType(structureDefinition.getType());
                                 }
@@ -212,8 +219,9 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
                                 apiDefinition.addSupportedIg(igName);
                                 apiDefinition.setOpenAPI(oasGenerator.generateResourceSchema(apiDefinition,
                                         structureDefinition));
-                                FHIRR4ImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
-                            } else if ("primary-type".equals(code) || "complex-type".equals(code)) {
+                                fhirR4ImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
+                            }
+                            else if ("primary-type".equals(code) || "complex-type".equals(code)) {
                                 FHIRR4DataTypeDef dataTypeDef = new FHIRR4DataTypeDef();
                                 dataTypeDef.setDefinition(structureDefinition);
                                 dataTypeDef.setKind(R4DefKind.fromCode(code));
@@ -224,29 +232,31 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
                             SearchParameter searchParameter = (SearchParameter) parsedDef;
                             FHIRR4SearchParamDef FHIRR4SearchParamDef = new FHIRR4SearchParamDef();
                             FHIRR4SearchParamDef.setSearchParameter(searchParameter);
-                            FHIRR4ImplementationGuide.getSearchParameters().putIfAbsent(searchParameter.getUrl(),
+                            fhirR4ImplementationGuide.getSearchParameters().putIfAbsent(searchParameter.getUrl(),
                                     FHIRR4SearchParamDef);
                         } else if (parsedDef instanceof Bundle) {
                             //Bundled definitions
                             Bundle definitions = (Bundle) parsedDef;
                             for (Bundle.BundleEntryComponent entry : definitions.getEntry()) {
                                 Resource fhirResourceEntry = entry.getResource();
+
                                 if (fhirResourceEntry instanceof StructureDefinition) {
                                     // Bundled structure definitions
                                     StructureDefinition structureDefinition = (StructureDefinition) fhirResourceEntry;
                                     String code = structureDefinition.getKind().toCode();
+
                                     if ("resource".equals(code)) {
                                         FHIRR4ResourceDef FHIRR4ResourceDef = new FHIRR4ResourceDef();
                                         FHIRR4ResourceDef.setDefinition(structureDefinition);
                                         FHIRR4ResourceDef.setKind(R4DefKind.fromCode(code));
-                                        FHIRR4ImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(),
-                                                FHIRR4ResourceDef);
+                                        fhirR4ImplementationGuide.getResources().putIfAbsent(structureDefinition.getUrl(), FHIRR4ResourceDef);
+
                                         R4OASGenerator oasGenerator = R4OASGenerator.getInstance();
                                         R4APIDefinition apiDefinition;
-                                        if (FHIRR4ImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
-                                            apiDefinition = FHIRR4ImplementationGuide.
-                                                    getApiDefinitions().get(structureDefinition.getType());
-                                        } else {
+                                        if (fhirR4ImplementationGuide.getApiDefinitions().containsKey(structureDefinition.getType())) {
+                                            apiDefinition = fhirR4ImplementationGuide.getApiDefinitions().get(structureDefinition.getType());
+                                        }
+                                        else {
                                             apiDefinition = new R4APIDefinition();
                                             apiDefinition.setResourceType(structureDefinition.getType());
                                         }
@@ -254,48 +264,52 @@ public class FHIRR4SpecParser extends FHIRSpecParser {
                                         apiDefinition.addSupportedIg(igName);
                                         apiDefinition.setOpenAPI(oasGenerator.generateResourceSchema(apiDefinition,
                                                 structureDefinition));
-                                        FHIRR4ImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
-                                    } else if ("primary-type".equals(code) || "complex-type".equals(code)) {
+                                        fhirR4ImplementationGuide.addApiDefinition(structureDefinition.getType(), apiDefinition);
+                                    }
+                                    else if ("primary-type".equals(code) || "complex-type".equals(code)) {
                                         FHIRR4DataTypeDef dataTypeDef = new FHIRR4DataTypeDef();
                                         dataTypeDef.setDefinition(structureDefinition);
                                         dataTypeDef.setKind(R4DefKind.fromCode(code));
                                         FHIRR4SpecificationData.getDataHolderInstance().addDataType(structureDefinition.getId(),
                                                 dataTypeDef);
                                     }
-                                } else if (fhirResourceEntry instanceof SearchParameter) {
+                                }
+                                else if (fhirResourceEntry instanceof SearchParameter) {
                                     //Bundled search parameters
                                     SearchParameter searchParameter = (SearchParameter) fhirResourceEntry;
-                                    FHIRR4SearchParamDef FHIRR4SearchParamDef = new FHIRR4SearchParamDef();
-                                    FHIRR4SearchParamDef.setSearchParameter(searchParameter);
-                                    FHIRR4ImplementationGuide.getSearchParameters().putIfAbsent(
-                                            searchParameter.getUrl(), FHIRR4SearchParamDef);
-                                } else if (fhirResourceEntry instanceof OperationDefinition) {
+                                    FHIRR4SearchParamDef fhirR4SearchParamDef = new FHIRR4SearchParamDef();
+                                    fhirR4SearchParamDef.setSearchParameter(searchParameter);
+                                    fhirR4ImplementationGuide.getSearchParameters().putIfAbsent(
+                                            searchParameter.getUrl(), fhirR4SearchParamDef);
+                                }
+                                else if (fhirResourceEntry instanceof OperationDefinition) {
                                     //Bundled Operation Definitions
                                     OperationDefinition operationDefinition = (OperationDefinition) fhirResourceEntry;
                                     FHIRR4OperationDef operationDef = new FHIRR4OperationDef();
                                     operationDef.setOperationDefinition(operationDefinition);
-                                    FHIRR4ImplementationGuide.getOperations().putIfAbsent(operationDefinition.getUrl(), operationDef);
+                                    fhirR4ImplementationGuide.getOperations().putIfAbsent(operationDefinition.getUrl(), operationDef);
                                 }
                             }
-                        } else if (parsedDef instanceof CodeSystem) {
+                        }
+                        else if (parsedDef instanceof CodeSystem) {
                             CodeSystem codeSystem = (CodeSystem) parsedDef;
-                            FHIRR4TerminologyDef FHIRR4TerminologyDef = new FHIRR4TerminologyDef();
-                            FHIRR4TerminologyDef.setTerminologyResource(codeSystem);
-                            FHIRR4TerminologyDef.setUrl(codeSystem.getUrl());
-                            FHIRR4SpecificationData.getDataHolderInstance().addCodeSystem(FHIRR4TerminologyDef.getUrl(),
-                                    FHIRR4TerminologyDef);
-                        } else if (parsedDef instanceof ValueSet) {
+                            FHIRR4TerminologyDef fhirR4TerminologyDef = new FHIRR4TerminologyDef();
+                            fhirR4TerminologyDef.setTerminologyResource(codeSystem);
+                            fhirR4TerminologyDef.setUrl(codeSystem.getUrl());
+                            FHIRR4SpecificationData.getDataHolderInstance().addCodeSystem(FHIRR4TerminologyDef.getUrl(), fhirR4TerminologyDef);
+                        }
+                        else if (parsedDef instanceof ValueSet) {
                             ValueSet valueSet = (ValueSet) parsedDef;
-                            FHIRR4TerminologyDef FHIRR4TerminologyDef = new FHIRR4TerminologyDef();
-                            FHIRR4TerminologyDef.setTerminologyResource(valueSet);
-                            FHIRR4TerminologyDef.setUrl(valueSet.getUrl());
-                            FHIRR4SpecificationData.getDataHolderInstance().addValueSet(FHIRR4TerminologyDef.getUrl(),
-                                    FHIRR4TerminologyDef);
-                        } else if (parsedDef instanceof ImplementationGuide) {
+                            FHIRTerminologyDef fhirR4TerminologyDef = new FHIRTerminologyDef();
+                            fhirR4TerminologyDef.setTerminologyResource(valueSet);
+                            fhirR4TerminologyDef.setUrl(valueSet.getUrl());
+                            FHIRR4SpecificationData.getDataHolderInstance().addValueSet(FHIRR4TerminologyDef.getUrl(), fhirR4TerminologyDef);
+                        }
+                        else if (parsedDef instanceof ImplementationGuide) {
                             // overriding the FHIR implementation guide name if the ImplementationGuide resource json
                             // file is available in the IG directory.
-                            FHIRR4ImplementationGuide.setName(((ImplementationGuide) parsedDef).getName());
-                            FHIRR4ImplementationGuide.setId(((ImplementationGuide) parsedDef).getId());
+                            fhirR4ImplementationGuide.setName(((ImplementationGuide) parsedDef).getName());
+                            fhirR4ImplementationGuide.setId(((ImplementationGuide) parsedDef).getId());
                         }
                     } catch (CodeGenException e) {
                         LOG.error("Error occurred while processing FHIR resource definition.", e);

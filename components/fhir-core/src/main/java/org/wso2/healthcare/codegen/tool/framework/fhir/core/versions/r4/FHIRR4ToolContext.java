@@ -30,7 +30,7 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfi
  */
 public class FHIRR4ToolContext extends FHIRToolContext {
 
-    private org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig config;
+    private FHIRToolConfig config;
     private FHIRSpecificationData specificationData;
 
     @Override
@@ -39,7 +39,7 @@ public class FHIRR4ToolContext extends FHIRToolContext {
     }
 
     @Override
-    public org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig getConfig() {
+    public FHIRToolConfig getConfig() {
         return config;
     }
 

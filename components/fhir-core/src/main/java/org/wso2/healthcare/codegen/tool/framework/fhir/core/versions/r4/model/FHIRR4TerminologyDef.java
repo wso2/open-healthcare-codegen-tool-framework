@@ -21,13 +21,14 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model;
 import org.hl7.fhir.r4.model.Resource;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 
 /**
  * This class holds FHIR Terminology definition model.
  */
-public class FHIRR4TerminologyDef extends FHIRSearchParamDef {
+public class FHIRR4TerminologyDef extends FHIRTerminologyDef {
 
-    private String url;
+    private static String url;
     private Resource terminologyResource;
 
     public Resource getTerminologyResource() {
@@ -38,11 +39,11 @@ public class FHIRR4TerminologyDef extends FHIRSearchParamDef {
         this.terminologyResource = terminologyResource;
     }
 
-    public String getUrl() {
+    public static String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        FHIRR4TerminologyDef.url = url;
     }
 }

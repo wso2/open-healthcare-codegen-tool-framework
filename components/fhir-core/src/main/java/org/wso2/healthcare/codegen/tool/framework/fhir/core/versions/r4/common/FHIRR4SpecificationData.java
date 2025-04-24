@@ -23,6 +23,7 @@ import org.hl7.fhir.r4.model.ElementDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRDataTypeDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRImplementationGuide;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4DataTypeDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4ImplementationGuide;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4SearchParamDef;
@@ -44,9 +45,9 @@ public class FHIRR4SpecificationData extends FHIRSpecificationData {
 
     private Map<String, FHIRDataTypeDef> dataTypes;
     private Map<String, FHIRImplementationGuide> fhirImplementationGuides;
-    private Map<String, FHIRR4TerminologyDef> valueSets;
-    private Map<String, FHIRR4TerminologyDef> codeSystems;
     private Map<String, Map<String,Coding>> resolvedTerminologies;
+    private Map<String, FHIRTerminologyDef> valueSets;
+    private Map<String, FHIRTerminologyDef> codeSystems;
     private final HashMap<String, List<FHIRR4SearchParamDef>> internationalSpecSearchParameters = new HashMap<>();
 
     public static FHIRR4SpecificationData getDataHolderInstance() {
@@ -86,27 +87,27 @@ public class FHIRR4SpecificationData extends FHIRSpecificationData {
         this.fhirImplementationGuides = fhirImplementationGuides;
     }
 
-    public void addValueSet(String id, FHIRR4TerminologyDef terminologyDef) {
+    public void addValueSet(String id, FHIRTerminologyDef terminologyDef) {
         this.valueSets.putIfAbsent(id, terminologyDef);
     }
 
-    public Map<String, FHIRR4TerminologyDef> getValueSets() {
+    public Map<String, FHIRTerminologyDef> getValueSets() {
         return valueSets;
     }
 
-    public void setValueSets(Map<String, FHIRR4TerminologyDef> valueSets) {
+    public void setValueSets(Map<String, FHIRTerminologyDef> valueSets) {
         this.valueSets = valueSets;
     }
 
-    public void addCodeSystem(String id, FHIRR4TerminologyDef terminologyDef) {
+    public void addCodeSystem(String id, FHIRTerminologyDef terminologyDef) {
         this.codeSystems.putIfAbsent(id, terminologyDef);
     }
 
-    public Map<String, FHIRR4TerminologyDef> getCodeSystems() {
+    public Map<String, FHIRTerminologyDef> getCodeSystems() {
         return codeSystems;
     }
 
-    public void setCodeSystems(Map<String, FHIRR4TerminologyDef> codeSystems) {
+    public void setCodeSystems(Map<String, FHIRTerminologyDef> codeSystems) {
         this.codeSystems = codeSystems;
     }
 

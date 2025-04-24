@@ -20,6 +20,7 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common;
 
 import org.hl7.fhir.r4.model.*;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecUtils;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4TerminologyDef;
 
 import java.util.ArrayList;
@@ -94,19 +95,21 @@ public class FHIRR4SpecUtils implements FHIRSpecUtils {
      * @param codeSystems code systems
      * @return codings map
      */
-    public static Map<String, Map<String, Coding>> resolveTerminology(Map<String, FHIRR4TerminologyDef> valueSets, Map<String, FHIRR4TerminologyDef> codeSystems) {
+    public static Map<String, Map<String, Coding>> resolveTerminology(Map<String, FHIRTerminologyDef> valueSets, Map<String, FHIRTerminologyDef> codeSystems) {
         Map<String, Map<String, Coding>> codingMap = new HashMap<>();
         Map<String, Coding> codings;
 
-        for (Map.Entry<String, FHIRR4TerminologyDef> valueSetEntry : valueSets.entrySet()) {
+        for (Map.Entry<String, FHIRTerminologyDef> valueSetEntry : valueSets.entrySet()) {
             codings = new HashMap<>();
             ValueSet valueSet = (ValueSet) valueSetEntry.getValue().getTerminologyResource();
             ValueSet.ValueSetComposeComponent compose = valueSet.getCompose();
             List<ValueSet.ConceptSetComponent> include = compose.getInclude();
+
             for (ValueSet.ConceptSetComponent conceptSetComponent : include) {
                 String system = conceptSetComponent.getSystem();
                 List<ValueSet.ConceptReferenceComponent> concepts = conceptSetComponent.getConcept();
                 List<String> includedCodes = new ArrayList<>();
+
                 for (ValueSet.ConceptReferenceComponent concept : concepts) {
                     if (concept.getDisplay() != null) {
                         Coding coding = new Coding();
@@ -114,7 +117,8 @@ public class FHIRR4SpecUtils implements FHIRSpecUtils {
                         coding.setDisplay(concept.getDisplay());
                         coding.setSystem(system);
                         codings.put(concept.getCode(), coding);
-                    } else {
+                    }
+                    else {
                         includedCodes.add(concept.getCode());
                         Coding coding = new Coding();
                         coding.setCode(concept.getCode());
@@ -125,10 +129,13 @@ public class FHIRR4SpecUtils implements FHIRSpecUtils {
 
                 if (codeSystems.get(system) != null) {
                     CodeSystem codeSystem = (CodeSystem) codeSystems.get(system).getTerminologyResource();
+
                     if (codeSystem != null) {
                         List<CodeSystem.ConceptDefinitionComponent> concept = codeSystem.getConcept();
+
                         for (CodeSystem.ConceptDefinitionComponent conceptDefinitionComponent : concept) {
                             List<CodeSystem.ConceptPropertyComponent> property = conceptDefinitionComponent.getProperty();
+
                             // check if the code is deprecated
                             boolean isDeprecated = false;
                             for (CodeSystem.ConceptPropertyComponent conceptPropertyComponent : property) {

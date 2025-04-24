@@ -2,6 +2,8 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.FHIRR4ToolContext;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.FHIRR5ToolContext;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.common.FHIRR5SpecificationData;
 
 public class FHIRToolContextFactory {
     public static FHIRToolContext getToolContext(String fhirVersion){
@@ -12,7 +14,9 @@ public class FHIRToolContextFactory {
                 return fhirR4ToolContext;
             }
             case "r5": {
-                return null;
+                FHIRR5ToolContext fhirr5ToolContext = new FHIRR5ToolContext();
+                fhirr5ToolContext.setSpecificationData(FHIRR5SpecificationData.getDataHolderInstance());
+                return fhirr5ToolContext;
             }
             default: {
                 throw new IllegalArgumentException("Unsupported FHIR version. Only R4 and R5 are supported.");
