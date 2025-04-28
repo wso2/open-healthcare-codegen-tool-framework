@@ -1,16 +1,14 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
-import org.hl7.fhir.r4.model.ValueSet;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 
-public class FHIRTerminologyDef implements SpecModel {
-    public void setTerminologyResource(ValueSet valueSet) {
-    }
+public interface FHIRTerminologyDef extends SpecModel {
+    // Generalized Resource to Object as there are R4 Resource and R5 Resource
+    Object getTerminologyResource();
 
-    public void setUrl(String url) {
-    }
+    void setTerminologyResource(Object terminologyResource);
 
-    public Object getTerminologyResource() {
-        return null;
-    }
+    String getUrl();
+
+    void setUrl(String url);
 }

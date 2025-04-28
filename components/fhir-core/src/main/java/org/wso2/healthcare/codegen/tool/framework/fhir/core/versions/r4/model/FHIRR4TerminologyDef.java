@@ -19,6 +19,7 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model;
 
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
@@ -26,24 +27,27 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminolog
 /**
  * This class holds FHIR Terminology definition model.
  */
-public class FHIRR4TerminologyDef extends FHIRTerminologyDef {
+public class FHIRR4TerminologyDef implements FHIRTerminologyDef {
 
-    private static String url;
+    private String url;
     private Resource terminologyResource;
 
+    @Override
     public Resource getTerminologyResource() {
         return terminologyResource;
     }
 
-    public void setTerminologyResource(Resource terminologyResource) {
-        this.terminologyResource = terminologyResource;
+    @Override
+    public void setTerminologyResource(Object terminologyResource) {
+        this.terminologyResource = (Resource) terminologyResource;
     }
 
-    public static String getUrl() {
+    public String getUrl() {
         return url;
     }
 
+    @Override
     public void setUrl(String url) {
-        FHIRR4TerminologyDef.url = url;
+        this.url = url;
     }
 }
