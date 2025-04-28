@@ -23,8 +23,8 @@ import org.hl7.fhir.r4.model.ElementDefinition;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.StructureDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRDataTypeDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util.R4CardinalityTypes;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.util.R4DefKind;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.CardinalityTypes;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ import java.util.List;
 public class FHIRR4DataTypeDef extends FHIRDataTypeDef {
     //TODO: filter the data type elements with element.id, element.extension filtered out
     private StructureDefinition definition;
-    private R4DefKind kind;
+    private DefKind kind;
 
     /**
      * Returns parsed structure definition model for the data type.
@@ -70,14 +70,14 @@ public class FHIRR4DataTypeDef extends FHIRDataTypeDef {
      * Extracts max cardinality and returns interpreted cardinality value for the datatype field for the given fhir path
      *
      * @param fhirPath FHIR Path value representing the data type field(eg: Identifier.value)
-     * @return {@link R4CardinalityTypes} interpretation for the cardinality for the FHIR tool lib.
+     * @return {@link CardinalityTypes} interpretation for the cardinality for the FHIR tool lib.
      */
-    public R4CardinalityTypes getMaxCardinalityType(String fhirPath) {
+    public CardinalityTypes getMaxCardinalityType(String fhirPath) {
         String maxCardinality = this.getMaxCardinality(fhirPath);
         if (StringUtils.isNotBlank(maxCardinality)) {
-            return R4CardinalityTypes.fromValue("max", maxCardinality);
+            return CardinalityTypes.fromValue("max", maxCardinality);
         }
-        return R4CardinalityTypes.INVALID;
+        return CardinalityTypes.INVALID;
     }
 
     /**
@@ -100,14 +100,14 @@ public class FHIRR4DataTypeDef extends FHIRDataTypeDef {
      * Extracts min cardinality and returns interpreted cardinality value for the datatype field for the given fhir path
      *
      * @param fhirPath FHIR Path value representing the data type field(eg: Identifier.value)
-     * @return {@link R4CardinalityTypes} interpretation for the cardinality for the FHIR tool lib.
+     * @return {@link CardinalityTypes} interpretation for the cardinality for the FHIR tool lib.
      */
-    public R4CardinalityTypes getMinCardinalityType(String fhirPath) {
+    public CardinalityTypes getMinCardinalityType(String fhirPath) {
         String minCardinality = this.getMinCardinality(fhirPath);
         if (StringUtils.isNotBlank(minCardinality)) {
-            return R4CardinalityTypes.fromValue("min", minCardinality);
+            return CardinalityTypes.fromValue("min", minCardinality);
         }
-        return R4CardinalityTypes.INVALID;
+        return CardinalityTypes.INVALID;
     }
 
     public List<Extension> getExtensions() {
@@ -119,11 +119,11 @@ public class FHIRR4DataTypeDef extends FHIRDataTypeDef {
      *
      * @return Data type kind
      */
-    public R4DefKind getKind() {
+    public DefKind getKind() {
         return kind;
     }
 
-    public void setKind(R4DefKind kind) {
+    public void setKind(DefKind kind) {
         this.kind = kind;
     }
 
