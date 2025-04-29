@@ -116,10 +116,9 @@ public class R4OASGenerator extends OASGenerator {
                         propertySchema.$ref(APIDefinitionConstants.OAS_REF_SCHEMAS + elementName);
                     }
                     else {
-                        String oasDataType = R4OASGenUtils.mapToOASDataType(
-                                type.getCode().substring(type.getCode().lastIndexOf(".") + 1));
+                        String oasDataType = OASGenUtils.mapToOASDataType(type.getCode().substring(type.getCode().lastIndexOf(".") + 1));
                         propertySchema.setType(oasDataType);
-                        propertySchema.setPattern(R4OASGenUtils.getRegexForDataType(oasDataType));
+                        propertySchema.setPattern(OASGenUtils.getRegexForDataType(oasDataType));
                     }
                     propertySchema.setDescription(element.getDefinition());
                     propertySchemaMap.put(elementName.toString(), propertySchema);
@@ -131,6 +130,7 @@ public class R4OASGenerator extends OASGenerator {
 
                 objectSchema.setProperties(propertySchemaMap);
                 allOfSchema.addAllOfItem(objectSchema);
+
                 List<String> requiredElements = new ArrayList<>(requiredElementsCollector);
                 allOfSchema.setRequired(requiredElements);
                 resourceOAS.getComponents().addSchemas(structureDefinition.getType(), allOfSchema);
