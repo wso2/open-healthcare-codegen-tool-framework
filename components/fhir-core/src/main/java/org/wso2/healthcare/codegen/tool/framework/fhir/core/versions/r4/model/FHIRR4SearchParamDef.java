@@ -20,7 +20,6 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model;
 
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.SearchParameter;
-import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.List;
 /**
  * This class holds FHIR Search Parameter definition model.
  */
-public class FHIRR4SearchParamDef extends FHIRSearchParamDef {
+public class FHIRR4SearchParamDef implements FHIRSearchParamDef {
 
     private SearchParameter searchParameter;
 
@@ -41,12 +40,13 @@ public class FHIRR4SearchParamDef extends FHIRSearchParamDef {
     }
 
     @Override
-    public SearchParameter getSearchParameter() {
+    public Object getSearchParameter() {
         return searchParameter;
     }
 
-    public void setSearchParameter(SearchParameter searchParameter) {
-        this.searchParameter = searchParameter;
+    @Override
+    public void setSearchParameter(Object searchParameter) {
+        this.searchParameter = (SearchParameter) searchParameter;
     }
 
     @Override
