@@ -6,7 +6,7 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.FHIRR5To
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.common.FHIRR5SpecificationData;
 
 public class FHIRToolContextFactory {
-    public static FHIRToolContext getToolContext(String fhirVersion){
+    public static AbstractFHIRToolContext getToolContext(String fhirVersion){
         switch (fhirVersion.toLowerCase()) {
             case "r4": {
                 FHIRR4ToolContext fhirR4ToolContext = new FHIRR4ToolContext();

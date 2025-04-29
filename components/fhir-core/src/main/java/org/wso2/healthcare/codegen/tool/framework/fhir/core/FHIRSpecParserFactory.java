@@ -3,7 +3,7 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.FHIRR4SpecParser;
 
 public class FHIRSpecParserFactory {
-    public static FHIRSpecParser getParser(String fhirVersion) {
+    public static AbstractFHIRSpecParser getParser(String fhirVersion) {
         if (fhirVersion.equalsIgnoreCase("r4")) {
             return new FHIRR4SpecParser();
         }

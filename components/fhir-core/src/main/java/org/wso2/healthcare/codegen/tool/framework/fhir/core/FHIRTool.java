@@ -35,7 +35,7 @@ public class FHIRTool extends AbstractTool {
 
     private static String fhirVersion = "";
     public static final String BASE_OAS_MODEL_PROPERTY = "baseOAS";
-    private FHIRToolContext toolContext;
+    private AbstractFHIRToolContext toolContext;
     private Map<String, Tool> toolImplementations;
 
     public FHIRTool(String fhirVersion) {
@@ -48,7 +48,7 @@ public class FHIRTool extends AbstractTool {
         toolContext = FHIRToolContextFactory.getToolContext(fhirVersion);
         toolContext.setConfig(toolConfig);
 
-        FHIRSpecParser specParser = FHIRSpecParserFactory.getParser(fhirVersion);
+        AbstractFHIRSpecParser specParser = FHIRSpecParserFactory.getParser(fhirVersion);
         specParser.parse(toolConfig);
     }
 
@@ -57,7 +57,7 @@ public class FHIRTool extends AbstractTool {
     }
 
     public void setToolContext(ToolContext toolContext) {
-        this.toolContext = (FHIRToolContext) toolContext;
+        this.toolContext = (AbstractFHIRToolContext) toolContext;
     }
 
     public Map<String, Tool> getToolImplementations() {

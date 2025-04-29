@@ -20,7 +20,7 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4;
 
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRToolContext;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.AbstractFHIRToolContext;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfig;
@@ -28,7 +28,7 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.config.FHIRToolConfi
 /**
  * Context for FHIR tools.
  */
-public class FHIRR4ToolContext extends FHIRToolContext {
+public class FHIRR4ToolContext extends AbstractFHIRToolContext {
 
     private FHIRToolConfig config;
     private FHIRSpecificationData specificationData;
