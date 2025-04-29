@@ -24,13 +24,14 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.CaseUtils;
 import org.hl7.fhir.r4.model.ElementDefinition;
+import org.hl7.fhir.r4.model.SearchParameter;
 import org.hl7.fhir.r4.model.StructureDefinition;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.APIDefinitionConstants;
+import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.OASGenUtils;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.OASGenerator;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
@@ -44,7 +45,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class generates OAS definitions specifically R4 FHIR resources, inheriting from OASGenerator.
+ * This class generates OAS definitions, specifically R4 FHIR resources, inheriting from OASGenerator.
  */
 public class R4OASGenerator extends OASGenerator {
 
@@ -148,7 +149,7 @@ public class R4OASGenerator extends OASGenerator {
      * @param apiDefinition API definition object
      */
     private void populateOASInternalValues(APIDefinition apiDefinition) {
-        apiDefinition.getOpenAPI().getInfo().setDescription(R4OASGenUtils.generateDescription(
+        apiDefinition.getOpenAPI().getInfo().setDescription(OASGenUtils.generateDescription(
                 apiDefinition.getResourceType(), apiDefinition.getSupportedProfiles()));
 
         Tag tag = new Tag();
@@ -172,13 +173,21 @@ public class R4OASGenerator extends OASGenerator {
 
         if (apiDefinition.getOpenAPI().getPaths().get("/") != null) {
             Operation rootGet = apiDefinition.getOpenAPI().getPaths().get("/").getGet();
+
             if (rootGet != null) {
-                for (FHIRR4SearchParamDef searchParamDef : FHIRR4SpecificationData.getDataHolderInstance().getInternationalSearchParameters(
+                for (FHIRSearchParamDef searchParamDef : FHIRR4SpecificationData.getDataHolderInstance().getInternationalSearchParameters(
                         apiDefinition.getResourceType())) {
-                    if (!R4OASGenUtils.isAdded(searchParamDef.getSearchParameter(), rootGet)) {
+
+                    if (!R4OASGenUtils.isAdded((SearchParameter) searchParamDef.getSearchParameter(), rootGet)) {
+                        SearchParameter searchParameter = (SearchParameter) searchParamDef.getSearchParameter();
+
                         rootGet.addParametersItem(R4OASGenUtils.generateParameter(
-                                searchParamDef.getSearchParameter().getCode(), searchParamDef.getSearchParameter().getDescription(),
-                                searchParamDef.getSearchParameter().getType().toCode(), "query", false));
+                                searchParameter.getCode(),
+                                searchParameter.getDescription(),
+                                searchParameter.getType().toCode(),
+                                "query",
+                                false)
+                        );
                     }
                 }
                 for (String commonParam : apiDefinition.getOpenAPI().getComponents().getParameters().keySet()) {
