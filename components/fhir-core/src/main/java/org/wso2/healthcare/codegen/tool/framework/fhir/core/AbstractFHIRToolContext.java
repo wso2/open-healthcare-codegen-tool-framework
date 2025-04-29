@@ -19,21 +19,30 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
-import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractSpecParser;
-import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
+import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractToolContext;
+import org.wso2.healthcare.codegen.tool.framework.commons.core.SpecificationData;
 
 /**
- * This interface is responsible delegating the parsing of FHIR specification files between versions.
+ * Generic Context for FHIR tools across different versions (R4, R5)
  */
 
-public class FHIRSpecParser extends AbstractSpecParser {
+public abstract class AbstractFHIRToolContext extends AbstractToolContext {
 
     @Override
-    public void parse(ToolConfig toolConfig) {
+    public ToolConfig getConfig() {
+        return null;
+    }
+
+    protected void setConfig(ToolConfig toolConfig) {
 
     }
 
-    public void parseIG(ToolConfig toolConfig, String igName, String igDirPath){
+    @Override
+    public SpecificationData getSpecificationData() {
+        return null;
+    }
+
+    protected void setSpecificationData(SpecificationData specificationData) {
 
     }
 }
