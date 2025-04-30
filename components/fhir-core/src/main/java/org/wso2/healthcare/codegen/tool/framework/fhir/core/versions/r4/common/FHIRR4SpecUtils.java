@@ -18,10 +18,13 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common;
 
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.ElementDefinition;
+import org.hl7.fhir.r4.model.StructureDefinition;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.CodeSystem;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecUtils;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4TerminologyDef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
