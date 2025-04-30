@@ -28,28 +28,32 @@ import java.util.List;
 /**
  * This class holds FHIR Operation definition model.
  */
-public class FHIRR4OperationDef extends FHIROperationDef {
+public class FHIRR4OperationDef implements FHIROperationDef <OperationDefinition>{
 
     private OperationDefinition operationDefinition;
     private List<String> targetResources;
 
+    @Override
     public OperationDefinition getOperationDefinition() {
         return operationDefinition;
     }
 
+    @Override
     public void setOperationDefinition(OperationDefinition operationDefinition) {
         this.operationDefinition = operationDefinition;
         populateTargetResources(operationDefinition);
     }
 
+    @Override
     public void populateTargetResources(OperationDefinition operationDefinition) {
         List<String> resources = new ArrayList<>();
-        for (CodeType resource:operationDefinition.getResource()) {
+        for (CodeType resource: operationDefinition.getResource()) {
             resources.add(resource.getCode());
         }
         this.targetResources = resources;
     }
 
+    @Override
     public List<String> getTargetResources(){
         return targetResources;
     }
