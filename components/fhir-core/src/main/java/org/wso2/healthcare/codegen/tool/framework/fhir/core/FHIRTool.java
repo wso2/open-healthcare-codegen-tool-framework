@@ -33,13 +33,12 @@ import java.util.Map;
  */
 public class FHIRTool extends AbstractTool {
 
-    private static String fhirVersion = "";
+    private static String fhirVersion = "r4";
     public static final String BASE_OAS_MODEL_PROPERTY = "baseOAS";
     private AbstractFHIRToolContext toolContext;
     private Map<String, Tool> toolImplementations;
 
     public FHIRTool(String fhirVersion) {
-        System.setProperty("fhir.version", fhirVersion);
         FHIRTool.fhirVersion = fhirVersion;
         toolImplementations = new HashMap<>();
     }
