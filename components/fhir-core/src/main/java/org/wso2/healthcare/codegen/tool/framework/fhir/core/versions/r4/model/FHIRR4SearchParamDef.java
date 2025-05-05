@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * This class holds FHIR Search Parameter definition model.
  */
-public class FHIRR4SearchParamDef implements FHIRSearchParamDef {
+public class FHIRR4SearchParamDef implements FHIRSearchParamDef <SearchParameter> {
 
     private SearchParameter searchParameter;
 
@@ -40,13 +40,13 @@ public class FHIRR4SearchParamDef implements FHIRSearchParamDef {
     }
 
     @Override
-    public Object getSearchParameter() {
+    public SearchParameter getSearchParameter() {
         return searchParameter;
     }
 
     @Override
-    public void setSearchParameter(Object searchParameter) {
-        this.searchParameter = (SearchParameter) searchParameter;
+    public void setSearchParameter(SearchParameter searchParameter) {
+        this.searchParameter = searchParameter;
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchPara
 import java.util.ArrayList;
 import java.util.List;
 
-public class FHIRR5SearchParamDef implements FHIRSearchParamDef {
+public class FHIRR5SearchParamDef implements FHIRSearchParamDef <SearchParameter> {
     private SearchParameter searchParameter;
 
     public FHIRR5SearchParamDef(){}
@@ -17,13 +17,13 @@ public class FHIRR5SearchParamDef implements FHIRSearchParamDef {
     }
 
     @Override
-    public Object getSearchParameter() {
+    public SearchParameter getSearchParameter() {
         return searchParameter;
     }
 
     @Override
-    public void setSearchParameter(Object searchParameter) {
-        this.searchParameter = (SearchParameter) searchParameter;
+    public void setSearchParameter(SearchParameter searchParameter) {
+        this.searchParameter = searchParameter;
     }
 
     @Override

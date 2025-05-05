@@ -4,10 +4,11 @@ import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 
 import java.util.List;
 
-public interface FHIRSearchParamDef extends SpecModel {
-    Object getSearchParameter();
+// S - SearchParameter
+public interface FHIRSearchParamDef <S> extends SpecModel {
+    S getSearchParameter();
 
-    void setSearchParameter(Object searchParameter);
+    void setSearchParameter(S searchParameter);
 
     List<String> getBaseResources();
 }

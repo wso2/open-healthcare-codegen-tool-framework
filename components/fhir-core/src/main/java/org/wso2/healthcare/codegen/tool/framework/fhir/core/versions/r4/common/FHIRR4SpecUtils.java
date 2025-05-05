@@ -94,7 +94,7 @@ public class FHIRR4SpecUtils implements FHIRSpecUtils {
     /**
      * Resolve terminologies from ValueSets/CodeSystems
      *
-     * @param valueSets value sets
+     * @param valueSets   value sets
      * @param codeSystems code systems
      * @return codings map
      */
