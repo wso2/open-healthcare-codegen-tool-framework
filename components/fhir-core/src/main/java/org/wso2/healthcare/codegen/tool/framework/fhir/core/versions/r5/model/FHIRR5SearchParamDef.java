@@ -1,6 +1,7 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.model;
 
-import org.hl7.fhir.r5.model.CodeType;
+import org.hl7.fhir.r5.model.Enumeration;
+import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.SearchParameter;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRSearchParamDef;
 
@@ -29,10 +30,10 @@ public class FHIRR5SearchParamDef implements FHIRSearchParamDef <SearchParameter
     @Override
     public List<String> getBaseResources(){
         List<String> baseResources = new ArrayList<>();
-        List<CodeType> baseResourceTypes = this.searchParameter.getBase();
+        List<Enumeration<Enumerations.VersionIndependentResourceTypesAll>> baseResourceTypes = this.searchParameter.getBase();
 
-        for(CodeType baseResourceType : baseResourceTypes){
-            baseResources.add(baseResourceType.getValue());
+        for(Enumeration<Enumerations.VersionIndependentResourceTypesAll> baseResourceType : baseResourceTypes){
+            baseResources.add(baseResourceType.getValue().toCode());
         }
 
         return baseResources;

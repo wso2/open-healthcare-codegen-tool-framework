@@ -52,9 +52,11 @@ public class FHIRToolConfig extends AbstractToolConfig {
     public void configure(ConfigType<?> configObj) throws CodeGenException {
         this.setConfigObj(configObj);
         String type = configObj.getType();
+
         if (Constants.JSON_CONFIG_TYPE.equals(type)) {
             JsonObject jsonConfigObj = (JsonObject) configObj.getConfigObj();
             JsonArray resourceProfiles = jsonConfigObj.getAsJsonArray("FHIRImplementationGuides");
+
             if (resourceProfiles != null) {
                 for (JsonElement resourceProfile : resourceProfiles) {
                     IGConfig igConfig = new IGConfig(resourceProfile.getAsJsonObject());
@@ -64,6 +66,7 @@ public class FHIRToolConfig extends AbstractToolConfig {
             JsonObject metadataConfigObj = jsonConfigObj.getAsJsonObject("metadata");
             if (metadataConfigObj != null) {
                 JsonArray dataTypeStructures = metadataConfigObj.getAsJsonArray("dataTypeStructures");
+
                 for (JsonElement dataTypeStructure : dataTypeStructures) {
                     DataTypeConfig dataTypeConfig = new DataTypeConfig(dataTypeStructure.getAsJsonObject());
                     dataTypeConfigs.put(dataTypeConfig.getName(), dataTypeConfig);
@@ -84,6 +87,7 @@ public class FHIRToolConfig extends AbstractToolConfig {
         } else if (Constants.TOML_CONFIG_TYPE.equals(type)) {
             TomlParseResult tomlConfigObj = ((TomlConfigType) configObj.getConfigObj()).getConfigObj();
             Object implementationGuides = tomlConfigObj.get("implementation_guides");
+
             if (implementationGuides instanceof TomlArray) {
                 List<Object> implementationGuidesList = ((TomlArray) implementationGuides).toList();
                 for (Object implementationGuide : implementationGuidesList) {
@@ -96,6 +100,7 @@ public class FHIRToolConfig extends AbstractToolConfig {
             Object metadata = tomlConfigObj.get("metadata");
             if (metadata instanceof TomlTable) {
                 TomlArray dataTypeStructures = ((TomlTable) metadata).getArray("data_type_structures");
+
                 if (dataTypeStructures != null) {
                     List<Object> dataTypeStructuresList = dataTypeStructures.toList();
                     for (Object dataTypeStructure : dataTypeStructuresList) {
@@ -104,6 +109,7 @@ public class FHIRToolConfig extends AbstractToolConfig {
                     }
                 }
             }
+
             Object dataTypeProfiles = tomlConfigObj.get("data_type_profiles");
             if (dataTypeProfiles instanceof TomlArray) {
                 List<Object> dataTypeProfileList = ((TomlArray) dataTypeProfiles).toList();

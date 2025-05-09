@@ -5,9 +5,13 @@ import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.StructureDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class FHIRR5SpecUtils {
+    private static final List<String> defaultSkippedProperties = new ArrayList<>();
+
     private static final String[] DEFAULT_BASE_DATA_TYPE_PROFILES = {
         "instant.profile.json", "time.profile.json", "date.profile.json", "dateTime.profile.json", "base64Binary.profile.json",
         "boolean.profile.json", "uri.profile.json", "url.profile.json", "canonical.profile.json", "oid.profile.json",
@@ -26,6 +30,13 @@ public class FHIRR5SpecUtils {
         "Meta.profile.json", "Reference.profile.json", "Dosage.profile.json", "ElementDefinition.profile.json",
         "Extension.profile.json", "Narrative.profile.json", "xhtml.profile.json"
     };
+
+    static {
+        defaultSkippedProperties.add("implicitRules");
+        defaultSkippedProperties.add("contained");
+        defaultSkippedProperties.add("modifierExtension");
+        defaultSkippedProperties.add("text");
+    }
 
     public static String[] getDefaultBaseDataTypeProfiles(){
         return DEFAULT_BASE_DATA_TYPE_PROFILES;

@@ -23,17 +23,18 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.StructureDefinition;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.CodeSystem;
-import org.hl7.fhir.r5.model.ElementDefinition;
-import org.hl7.fhir.r5.model.Extension;
-import org.hl7.fhir.r5.model.OperationDefinition;
-import org.hl7.fhir.r5.model.ValueSet;
-import org.hl7.fhir.r5.model.SearchParameter;
-import org.hl7.fhir.r5.model.Resource;
 import org.hl7.fhir.r5.model.ImplementationGuide;
-import org.hl7.fhir.r5.model.CodeType;
+import org.hl7.fhir.r5.model.OperationDefinition;
+import org.hl7.fhir.r5.model.Resource;
+import org.hl7.fhir.r5.model.SearchParameter;
+import org.hl7.fhir.r5.model.StructureDefinition;
+import org.hl7.fhir.r5.model.ValueSet;
+import org.hl7.fhir.r5.model.Enumeration;
+import org.hl7.fhir.r5.model.Extension;
+import org.hl7.fhir.r5.model.ElementDefinition;
+import org.hl7.fhir.r5.model.Enumerations.VersionIndependentResourceTypesAll;
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.AbstractFHIRSpecParser;
@@ -68,7 +69,7 @@ public class FHIRR5SpecParser extends AbstractFHIRSpecParser {
     private static final Log LOG = LogFactory.getLog(FHIRR5SpecParser.class);
 
     // File filter to get JSON files
-    private static final FilenameFilter jsonFileFilter = (dir, name) -> name.endsWith(".json");
+    private static final FilenameFilter jsonFileFilter = (dir, name) -> name.endsWith(".json") && name.matches("^[a-zA-Z].*");
 
     @Override
     public void parse(ToolConfig toolConfig){
@@ -169,6 +170,9 @@ public class FHIRR5SpecParser extends AbstractFHIRSpecParser {
         populateValues();
     }
 
+    /**
+     * This method is used to populate the values of the FHIRR5SpecificationData to the toolContext.
+     */
     @Override
     public void parseIG(ToolConfig toolConfig, String igName, String igDirPath){
         String igPath = igDirPath.contains(toolConfig.getSpecBasePath()) ? igDirPath : toolConfig.getSpecBasePath() + igDirPath;
@@ -187,7 +191,7 @@ public class FHIRR5SpecParser extends AbstractFHIRSpecParser {
                 }
 
                 for(File igProfileFile : igProfileFiles){
-                    if(igProfileFile.isDirectory() || isValidFHIRDefinition(igProfileFile, LOG)){
+                    if(igProfileFile.isDirectory() || !isValidFHIRDefinition(igProfileFile, LOG)){
                         continue;
                     }
 
@@ -333,8 +337,8 @@ public class FHIRR5SpecParser extends AbstractFHIRSpecParser {
             if(resource.hasResource() && "SearchParameter".equals(resource.getResource().getResourceType().toString())){
                 SearchParameter searchParameter = (SearchParameter) resource.getResource();
 
-                for(CodeType baseResource : searchParameter.getBase()){
-                    String resourceName = baseResource.getCode();
+                for(Enumeration<VersionIndependentResourceTypesAll> baseResource : searchParameter.getBase()){
+                    String resourceName = baseResource.getValue().toCode();
                     FHIRR5SpecificationData.getDataHolderInstance().addInternationalSearchParameter(resourceName, new FHIRR5SearchParamDef(searchParameter));
                 }
             }
@@ -347,7 +351,7 @@ public class FHIRR5SpecParser extends AbstractFHIRSpecParser {
     @Override
     public void populateBaseDataTypes(){
         for(String baseDataTypeFile : FHIRR5SpecUtils.getDefaultBaseDataTypeProfiles()){
-            InputStream resourceAsStream = FHIRR5SpecParser.class.getClassLoader().getResourceAsStream("r5/profiles/bse-data-types/" + baseDataTypeFile);
+            InputStream resourceAsStream = FHIRR5SpecParser.class.getClassLoader().getResourceAsStream("r5/profiles/base-data-types/" + baseDataTypeFile);
 
             try{
                 IBaseResource parsedDef = parseDefinition(CTX, resourceAsStream);

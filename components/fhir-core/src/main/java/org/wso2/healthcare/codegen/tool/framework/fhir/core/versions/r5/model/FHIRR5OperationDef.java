@@ -1,6 +1,7 @@
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.model;
 
-import org.hl7.fhir.r5.model.CodeType;
+import org.hl7.fhir.r5.model.Enumeration;
+import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.OperationDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIROperationDef;
 
@@ -27,8 +28,8 @@ public class FHIRR5OperationDef implements FHIROperationDef <OperationDefinition
     public void populateTargetResources(OperationDefinition operationDefinition) {
         List<String> resources = new ArrayList<>();
         // CodeType: Store values from coding systems (like LOINC or ICD) in OperationDefinition
-        for(CodeType resource: operationDefinition.getResource()){
-            resources.add(resource.getCode());
+        for(Enumeration<Enumerations.VersionIndependentResourceTypesAll> resource: operationDefinition.getResource()){
+            resources.add(resource.getValue().toCode());
         }
         this.targetResources = resources;
     }

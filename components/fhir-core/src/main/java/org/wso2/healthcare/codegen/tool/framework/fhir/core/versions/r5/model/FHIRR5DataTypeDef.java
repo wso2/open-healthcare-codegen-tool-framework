@@ -18,7 +18,7 @@ public class FHIRR5DataTypeDef implements FHIRDataTypeDef<StructureDefinition, E
     /**
      * Returns parsed structure definition model for the data type.
      *
-     * @return {@link org.hl7.fhir.r4.model.StructureDefinition} instance for the data type definition
+     * @return {@link org.hl7.fhir.r5.model.StructureDefinition} instance for the data type definition
      */
     @Override
     public StructureDefinition getDefinition() {
