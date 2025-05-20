@@ -3,11 +3,14 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.common;
 import org.hl7.fhir.r5.model.Coding;
 import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.StructureDefinition;
+import org.hl7.fhir.r5.model.CodeSystem;
+import org.hl7.fhir.r5.model.ValueSet;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.model.FHIRTerminologyDef;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 public class FHIRR5SpecUtils {
     private static final List<String> defaultSkippedProperties = new ArrayList<>();
@@ -43,18 +46,106 @@ public class FHIRR5SpecUtils {
     }
 
     public static Map<String, Map<String, Coding>> resolveTerminology(Map<String, FHIRTerminologyDef> valueSets, Map<String, FHIRTerminologyDef> codeSystems) {
-        return null;
+        Map<String, Map<String, Coding>> codingMap = new HashMap<>();
+        Map<String, Coding> codings;
+
+        for (Map.Entry<String, FHIRTerminologyDef> valueSetEntry : valueSets.entrySet()) {
+            codings = new HashMap<>();
+            ValueSet valueSet = (ValueSet) valueSetEntry.getValue().getTerminologyResource();
+            ValueSet.ValueSetComposeComponent compose = valueSet.getCompose();
+            List<ValueSet.ConceptSetComponent> include = compose.getInclude();
+
+            for (ValueSet.ConceptSetComponent conceptSetComponent : include) {
+                String system = conceptSetComponent.getSystem();
+                List<ValueSet.ConceptReferenceComponent> concepts = conceptSetComponent.getConcept();
+                List<String> includedCodes = new ArrayList<>();
+
+                for (ValueSet.ConceptReferenceComponent concept : concepts) {
+                    if (concept.getDisplay() != null) {
+                        Coding coding = new Coding();
+                        coding.setCode(concept.getCode());
+                        coding.setDisplay(concept.getDisplay());
+                        coding.setSystem(system);
+                        codings.put(concept.getCode(), coding);
+                    }
+                    else {
+                        includedCodes.add(concept.getCode());
+                        Coding coding = new Coding();
+                        coding.setCode(concept.getCode());
+                        coding.setSystem(system);
+                        codings.put(concept.getCode(), coding);
+                    }
+                }
+
+                if (codeSystems.get(system) != null) {
+                    CodeSystem codeSystem = (CodeSystem) codeSystems.get(system).getTerminologyResource();
+
+                    if (codeSystem != null) {
+                        List<CodeSystem.ConceptDefinitionComponent> concept = codeSystem.getConcept();
+
+                        for (CodeSystem.ConceptDefinitionComponent conceptDefinitionComponent : concept) {
+                            List<CodeSystem.ConceptPropertyComponent> property = conceptDefinitionComponent.getProperty();
+
+                            // check if the code is deprecated
+                            boolean isDeprecated = false;
+                            for (CodeSystem.ConceptPropertyComponent conceptPropertyComponent : property) {
+                                if ("status".equals(conceptPropertyComponent.getCode()) && "deprecated"
+                                        .equals(conceptPropertyComponent.getValue().toString())) {
+                                    isDeprecated = true;
+                                    break;
+                                }
+                            }
+                            if (!isDeprecated) {
+                                if (concepts.size() > 0 && !includedCodes.contains(conceptDefinitionComponent.getCode())) {
+                                    continue;
+                                }
+                                Coding coding = new Coding();
+                                coding.setCode(conceptDefinitionComponent.getCode());
+                                coding.setDisplay(conceptDefinitionComponent.getDisplay());
+                                coding.setSystem(system);
+                                codings.put(conceptDefinitionComponent.getCode(), coding);
+                            }
+                        }
+                    }
+                }
+            }
+            codingMap.put(valueSet.getUrl(), codings);
+        }
+        return codingMap;
     }
 
     public static boolean isMultiDataType(ElementDefinition elementDefinition) {
-        return false;
+        List<ElementDefinition.TypeRefComponent> typeList = elementDefinition.getType();
+        return typeList.size() > 1;
     }
 
     public static String getTypeCodeOfElementDef(ElementDefinition elementDefinition) {
-        return null;
+        String typeCode = null;
+        List<ElementDefinition.TypeRefComponent> typeList = elementDefinition.getType();
+        if (typeList.size() > 0) {
+            typeCode = typeList.get(0).getCode();
+        }
+        return typeCode;
     }
 
-    public static boolean canSkip(StructureDefinition structureDefinition, ElementDefinition elementDefinition) {
-        return false;
+    public static boolean canSkip(StructureDefinition profileDefinition, ElementDefinition element) {
+        if(profileDefinition.getType().equals(element.getPath())){
+            return true;
+        }
+
+        // Cardinality
+        String max = element.getMax();
+        if("0".equals(max)){
+            return true;
+        }
+
+        String type = getTypeCodeOfElementDef(element);
+
+        if("Extension".equals(type) && !element.hasSliceName()){
+            return true;
+        }
+
+        String internalFPath = element.getPath().substring(profileDefinition.getType().length() + 1);
+        return defaultSkippedProperties.contains(internalFPath);
     }
 }

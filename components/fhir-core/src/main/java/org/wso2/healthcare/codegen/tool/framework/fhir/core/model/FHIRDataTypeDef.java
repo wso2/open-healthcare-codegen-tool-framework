@@ -2,7 +2,6 @@ package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.CardinalityTypes;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 
 import java.util.List;
 
