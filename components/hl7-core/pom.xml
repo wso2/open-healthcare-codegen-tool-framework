@@ -41,6 +41,11 @@
             <groupId>com.github.xmlet</groupId>
             <artifactId>xsdParser</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>
