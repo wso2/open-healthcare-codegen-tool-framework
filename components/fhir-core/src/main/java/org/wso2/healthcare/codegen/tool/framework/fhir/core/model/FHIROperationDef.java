@@ -18,38 +18,21 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
-import org.hl7.fhir.r4.model.CodeType;
-import org.hl7.fhir.r4.model.OperationDefinition;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class holds FHIR Operation definition model.
- */
-public class FHIROperationDef {
+* This is the generic class for all FHIR operation definitions irrespective of FHIR version.
+* It is parameterized with the following type:
+*   @O - OperationDefinition
+* */
 
-    private OperationDefinition operationDefinition;
-    private List<String> targetResources;
+public interface FHIROperationDef <O> {
 
-    public OperationDefinition getOperationDefinition() {
-        return operationDefinition;
-    }
+    O getOperationDefinition();
 
-    public void setOperationDefinition(OperationDefinition operationDefinition) {
-        this.operationDefinition = operationDefinition;
-        populateTargetResources(operationDefinition);
-    }
+    void setOperationDefinition(O operationDefinition);
 
-    public void populateTargetResources(OperationDefinition operationDefinition) {
-        List<String> resources = new ArrayList<>();
-        for (CodeType resource:operationDefinition.getResource()) {
-            resources.add(resource.getCode());
-        }
-        this.targetResources = resources;
-    }
+    void populateTargetResources(O operationDefinition);
 
-    public List<String> getTargetResources(){
-        return targetResources;
-    }
+    List<String> getTargetResources();
 }

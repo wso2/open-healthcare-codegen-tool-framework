@@ -27,7 +27,7 @@ import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 public interface SpecParser {
 
     /**
-     * Parses protocol specifications and interprete the spec data to be used by the tools.
+     * Parses protocol specifications and interpret the spec data to be used by the tools.
      *
      * @param toolConfig {@link ToolConfig} protocol level tool configuration.
      */

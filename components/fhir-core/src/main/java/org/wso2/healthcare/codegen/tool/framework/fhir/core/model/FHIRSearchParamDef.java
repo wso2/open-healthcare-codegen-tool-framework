@@ -18,41 +18,20 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
-import org.hl7.fhir.r4.model.CodeType;
-import org.hl7.fhir.r4.model.SearchParameter;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class holds FHIR Search Parameter definition model.
- */
-public class FHIRSearchParamDef implements SpecModel {
+* This is the generic class for all FHIR search parameter definitions irrespective of FHIR version.
+* It is parameterized with the following type:
+*   @S - SearchParameter
+* */
 
-    private SearchParameter searchParameter;
+public interface FHIRSearchParamDef <S> extends SpecModel {
+    S getSearchParameter();
 
-    public FHIRSearchParamDef() {
-    }
+    void setSearchParameter(S searchParameter);
 
-    public FHIRSearchParamDef(SearchParameter searchParameter) {
-        this.searchParameter = searchParameter;
-    }
-
-    public SearchParameter getSearchParameter() {
-        return searchParameter;
-    }
-
-    public void setSearchParameter(SearchParameter searchParameter) {
-        this.searchParameter = searchParameter;
-    }
-
-    public List<String> getBaseResources() {
-        List<String> baseResources = new ArrayList<>();
-        List<CodeType> baseResourceTypes = this.searchParameter.getBase();
-        for (CodeType baseResourceType : baseResourceTypes) {
-            baseResources.add(baseResourceType.getCode());
-        }
-        return baseResources;
-    }
+    List<String> getBaseResources();
 }
