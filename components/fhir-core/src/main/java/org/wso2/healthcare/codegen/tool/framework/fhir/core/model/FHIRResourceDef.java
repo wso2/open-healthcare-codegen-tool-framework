@@ -18,105 +18,52 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
-import org.hl7.fhir.r4.model.ElementDefinition;
-import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.StructureDefinition;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecUtils;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.DefKind;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.util.ElementExpansionType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This class holds the FHIR resource definition.
+ * This is the generic class for all FHIR resource definitions irrespective of FHIR version
+ * It is parameterized with the following types:
+ *
+ * @StructureDefinition - import StructureDefinition related to a FHIR version
+ * @Extension - import Extension related to a FHIR version
+ * @ElementDefinition - import ElementDefinition related to a FHIR version
  */
-public class FHIRResourceDef implements SpecModel {
 
-    private StructureDefinition definition;
-    private DefKind kind;
-    private final Map<String, FHIRSearchParamDef> searchParamDefs = new HashMap<>();
-    private final Map<String, FHIROperationDef> operationDefMap = new HashMap<>();
-    private FHIRResourceDef parentResource;
+public interface FHIRResourceDef<StructureDefinition, Extension, ElementDefinition> extends SpecModel {
 
-    public StructureDefinition getDefinition() {
-        return definition;
-    }
+    StructureDefinition getDefinition();
 
-    public void setDefinition(StructureDefinition definition) {
-        this.definition = definition;
-    }
+    void setDefinition(StructureDefinition definition);
 
-    public List<Extension> getExtensions() {
-        return definition.getExtension();
-    }
+    List<Extension> getExtensions();
 
-    public Map<String, FHIRSearchParamDef> getSearchParameters() {
-        return searchParamDefs;
-    }
-    public Map<String, FHIROperationDef> getOperations(){
-        return operationDefMap;
-    }
-    public void addSearchParam(String url, FHIRSearchParamDef searchParam){
-        searchParamDefs.put(url,searchParam);
-    }
+    Map<String, FHIRSearchParamDef> getSearchParameters();
 
-    public FHIRResourceDef getParentResource() {
-        return parentResource;
-    }
+    Map<String, FHIROperationDef> getOperations();
 
-    public void setParentResource(FHIRResourceDef parentResource) {
-        this.parentResource = parentResource;
-    }
+    void addSearchParam(String url, FHIRSearchParamDef searchParam);
 
-    public StructureDefinition getDataType(String fhirPath) {
-        return null;
-    }
+    FHIRResourceDef<StructureDefinition, Extension, ElementDefinition> getParentResource();
 
-    /**
-     * Returns elements of the FHIR resource, given the expansion type: snapshot|differential.
-     *
-     * @param expansionType values: snapshot|differential
-     * @return elements of the FHIR resource
-     */
-    public List<ElementDefinition> getElements(ElementExpansionType expansionType) {
-        List<ElementDefinition> elementDefinitions = null;
-        List<ElementDefinition> processableElementDefinitions = null;
-        if (expansionType.equals(ElementExpansionType.SNAPSHOT)) {
-            elementDefinitions = definition.getSnapshot().getElement();
-            processableElementDefinitions = new ArrayList<>();
-        } else if (expansionType.equals(ElementExpansionType.DIFFERENTIAL)) {
-            elementDefinitions = definition.getDifferential().getElement();
-            processableElementDefinitions = new ArrayList<>();
-        }
-        if (elementDefinitions != null) {
-            for (ElementDefinition elementDefinition : elementDefinitions) {
-                if (FHIRSpecUtils.canSkip(definition, elementDefinition)) {
-                    continue;
-                }
-                processableElementDefinitions.add(elementDefinition);
-            }
-        }
-        return processableElementDefinitions;
-    }
+    void setParentResource(FHIRResourceDef<StructureDefinition, Extension, ElementDefinition> parentResource);
 
-    public String getDefinitionType() {
-        return this.definition.getKind().toCode();
-    }
+    StructureDefinition getDataType(String fhirPath);
+
+    List<ElementDefinition> getElements(ElementExpansionType expansionType);
+
+    String getDefinitionType();
 
     /**
      * Returns resource type kind. values("resource", "logical", "invalid").
      *
      * @return Resource type kind
      */
-    public DefKind getKind() {
-        return kind;
-    }
+    DefKind getKind();
 
-    public void setKind(DefKind kind) {
-        this.kind = kind;
-    }
+    void setKind(DefKind kind);
 }

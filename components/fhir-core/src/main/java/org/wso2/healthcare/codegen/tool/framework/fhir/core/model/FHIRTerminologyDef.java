@@ -18,30 +18,20 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.model;
 
-import org.hl7.fhir.r4.model.Resource;
 import org.wso2.healthcare.codegen.tool.framework.commons.model.SpecModel;
 
 /**
- * This class holds FHIR Terminology definition model.
+ * This is the generic class for all FHIR terminology definitions irrespective of FHIR version.
+ * * It is parameterized with the following type:
+ * *   @Resource - import Resource related to a FHIR version.
  */
-public class FHIRTerminologyDef implements SpecModel {
 
-    private String url;
-    private Resource terminologyResource;
+public interface FHIRTerminologyDef<Resource> extends SpecModel {
+    Resource getTerminologyResource();
 
-    public Resource getTerminologyResource() {
-        return terminologyResource;
-    }
+    void setTerminologyResource(Resource terminologyResource);
 
-    public void setTerminologyResource(Resource terminologyResource) {
-        this.terminologyResource = terminologyResource;
-    }
+    String getUrl();
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    void setUrl(String url);
 }

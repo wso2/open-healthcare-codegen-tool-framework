@@ -18,43 +18,37 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.OpenAPIV3Parser;
-import org.apache.commons.io.IOUtils;
 import org.wso2.healthcare.codegen.tool.framework.commons.config.ToolConfig;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.AbstractTool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.Tool;
 import org.wso2.healthcare.codegen.tool.framework.commons.core.ToolContext;
 import org.wso2.healthcare.codegen.tool.framework.commons.exception.CodeGenException;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.common.FHIRSpecificationData;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents the FHIR tool library which will hold the contexual data and utilities for the
+ * This class represents the FHIR tool library which will hold the contextual data and utilities for the
  * FHIR tool implementations to generate artifacts.
  */
 public class FHIRTool extends AbstractTool {
 
     public static final String BASE_OAS_MODEL_PROPERTY = "baseOAS";
-    private FHIRToolContext toolContext;
+    private String fhirVersion;
+    private AbstractFHIRToolContext toolContext;
     private Map<String, Tool> toolImplementations;
 
-    public FHIRTool() {
+    public FHIRTool(String fhirVersion) {
+        this.fhirVersion = fhirVersion;
         toolImplementations = new HashMap<>();
     }
 
     public void initialize(ToolConfig toolConfig) throws CodeGenException {
-        toolContext = new FHIRToolContext();
+        toolContext = FHIRToolContextFactory.getToolContext(fhirVersion);
         toolContext.setConfig(toolConfig);
-        FHIRSpecParser specParser = new FHIRSpecParser();
+
+        AbstractFHIRSpecParser specParser = FHIRSpecParserFactory.getParser(fhirVersion);
         specParser.parse(toolConfig);
-        toolContext.setSpecificationData(FHIRSpecificationData.getDataHolderInstance());
     }
 
     public ToolContext getToolContext() {
@@ -62,7 +56,7 @@ public class FHIRTool extends AbstractTool {
     }
 
     public void setToolContext(ToolContext toolContext) {
-        this.toolContext = (FHIRToolContext) toolContext;
+        this.toolContext = (AbstractFHIRToolContext) toolContext;
     }
 
     public Map<String, Tool> getToolImplementations() {
