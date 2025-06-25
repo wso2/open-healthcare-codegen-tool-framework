@@ -66,4 +66,8 @@ public class FHIRTool extends AbstractTool {
     public void setToolImplementations(Map<String, Tool> toolImplementations) {
         this.toolImplementations = toolImplementations;
     }
+
+    public String getFhirVersion(){
+        return fhirVersion;
+    }
 }
