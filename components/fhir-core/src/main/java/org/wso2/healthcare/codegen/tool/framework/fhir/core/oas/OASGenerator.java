@@ -103,6 +103,7 @@ public class OASGenerator {
         License license = new License();
         license.setName("Apache 2.0");
         license.setUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
+
         Contact contact = new Contact();
         contact.setName("API Support");
         contact.setUrl("https://wso2.com/contact/`");
@@ -257,8 +258,8 @@ public class OASGenerator {
                     break;
             }
         }
-        paths.addPathItem("/", rootPath);
-        paths.addPathItem("/{id}", idPath);
+        paths.addPathItem("/" + apiDefinition.getResourceType(), rootPath);
+        paths.addPathItem("/" + apiDefinition.getResourceType() + "/{id}", idPath);
         apiDefinition.getOpenAPI().setPaths(paths);
     }
 }
