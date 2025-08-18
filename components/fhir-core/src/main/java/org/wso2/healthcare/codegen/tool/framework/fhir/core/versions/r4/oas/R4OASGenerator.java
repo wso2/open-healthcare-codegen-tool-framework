@@ -168,8 +168,9 @@ public class R4OASGenerator extends OASGenerator {
         extensions.put(APIDefinitionConstants.OAS_EXTENSION_OH_FHIR_PROFILE, apiDefinition.getSupportedProfiles());
         apiDefinition.getOpenAPI().setExtensions(extensions);
 
-        if (apiDefinition.getOpenAPI().getPaths().get("/") != null) {
-            Operation rootGet = apiDefinition.getOpenAPI().getPaths().get("/").getGet();
+        String resourcePath = "/" + apiDefinition.getResourceType();
+        if (apiDefinition.getOpenAPI().getPaths().get(resourcePath) != null) {
+            Operation rootGet = apiDefinition.getOpenAPI().getPaths().get(resourcePath).getGet();
 
             if (rootGet != null) {
                 for (FHIRSearchParamDef searchParamDef : FHIRR4SpecificationData.getDataHolderInstance().getInternationalSearchParameters(
