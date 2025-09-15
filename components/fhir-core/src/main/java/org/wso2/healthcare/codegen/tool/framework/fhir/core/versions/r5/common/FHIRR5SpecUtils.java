@@ -48,8 +48,7 @@ public class FHIRR5SpecUtils {
             "ExtendedContactDetail.profile.json", "UsageContext.profile.json", "VirtualServiceDetail.profile.json",
             "MonetaryComponent.profile.json", "Expression.profile.json", "Availability.profile.json",
             "ParameterDefinition.profile.json", "RelatedArtifact.profile.json", "CodeableReference.profile.json",
-            "Meta.profile.json", "Reference.profile.json", "Dosage.profile.json", "ElementDefinition.profile.json",
-            "Extension.profile.json", "Narrative.profile.json", "xhtml.profile.json"
+            "Meta.profile.json", "Reference.profile.json", "Dosage.profile.json", "Narrative.profile.json", "xhtml.profile.json"
     };
 
     static {
