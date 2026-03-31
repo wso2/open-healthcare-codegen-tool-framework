@@ -1835,6 +1835,57 @@ components:
     default:
       type: oauth2
       flows:
-        implicit:
-          authorizationUrl: https://localhost:8243/authorize
-          scopes: {}
+        authorizationCode:
+          authorizationUrl: 'https://localhost:8243/authorize'
+          scopes:
+            patient/<ResourceType>.c: Grants <ResourceType> create privileges for Patient level.
+            patient/<ResourceType>.r: Grants <ResourceType> read privileges for Patient level.
+            patient/<ResourceType>.u: Grants <ResourceType> update privileges for Patient level.
+            patient/<ResourceType>.d: Grants <ResourceType> delete privileges for Patient level.
+            patient/<ResourceType>.s: Grants <ResourceType> search privileges for Patient level.
+            patient/*.c: Grants create privileges for all resources for Patient level.
+            patient/*.r: Grants read privileges for all resources for Patient level.
+            patient/*.u: Grants update privileges for all resources for Patient level.
+            patient/*.d: Grants delete privileges for all resources for Patient level.
+            patient/*.s: Grants search privileges for all resources for Patient level.
+            user/<ResourceType>.c: Grants <ResourceType> create privileges for User level.
+            user/<ResourceType>.r: Grants <ResourceType> read privileges for User level.
+            user/<ResourceType>.u: Grants <ResourceType> update privileges for User level.
+            user/<ResourceType>.d: Grants <ResourceType> delete privileges for User level.
+            user/<ResourceType>.s: Grants <ResourceType> search privileges for User level.
+            user/*.c: Grants create privileges for all resources for User level.
+            user/*.r: Grants read privileges for all resources for User level.
+            user/*.u: Grants update privileges for all resources for User level.
+            user/*.d: Grants delete privileges for all resources for User level.
+            user/*.s: Grants search privileges for all resources for User level.
+            system/<ResourceType>.c: Grants <ResourceType> create privileges for System level.
+            system/<ResourceType>.r: Grants <ResourceType> read privileges for System level.
+            system/<ResourceType>.u: Grants <ResourceType> update privileges for System level.
+            system/<ResourceType>.d: Grants <ResourceType> delete privileges for System level.
+            system/<ResourceType>.s: Grants <ResourceType> search privileges for System level.
+            system/*.c: Grants create privileges for all resources for System level.
+            system/*.r: Grants read privileges for all resources for System level.
+            system/*.u: Grants update privileges for all resources for System level.
+            system/*.d: Grants delete privileges for all resources for System level.
+            system/*.s: Grants search privileges for all resources for System level.
+          x-scopes-bindings:
+            patient/<ResourceType>.r: Internal/FhirRead
+            patient/<ResourceType>.s: Internal/FhirSearch
+            patient/<ResourceType>.c: Internal/FhirCreate
+            patient/<ResourceType>.u: Internal/FhirUpdate
+            patient/<ResourceType>.d: Internal/FhirDelete
+            patient/*.r: Internal/FhirRead
+            patient/*.s: Internal/FhirSearch
+            patient/*.c: Internal/FhirCreate
+            patient/*.u: Internal/FhirUpdate
+            patient/*.d: Internal/FhirDelete
+            user/<ResourceType>.r: Internal/FhirRead
+            user/<ResourceType>.s: Internal/FhirSearch
+            user/<ResourceType>.c: Internal/FhirCreate
+            user/<ResourceType>.u: Internal/FhirUpdate
+            user/<ResourceType>.d: Internal/FhirDelete
+            user/*.r: Internal/FhirRead
+            user/*.s: Internal/FhirSearch
+            user/*.c: Internal/FhirCreate
+            user/*.u: Internal/FhirUpdate
+            user/*.d: Internal/FhirDelete

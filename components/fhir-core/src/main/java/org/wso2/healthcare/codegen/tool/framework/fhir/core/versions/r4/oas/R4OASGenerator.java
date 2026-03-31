@@ -18,6 +18,7 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.oas;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.ComposedSchema;
@@ -36,7 +37,6 @@ import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.OASGenUtils;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.OASGenerator;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinition;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.common.FHIRR4SpecificationData;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r4.model.FHIRR4SearchParamDef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,8 +70,14 @@ public class R4OASGenerator extends OASGenerator {
     public OpenAPI generateResourceSchema(APIDefinition apiDefinition, StructureDefinition structureDefinition) throws CodeGenException {
         OpenAPI resourceOAS = new OpenAPI();
 
-        resourceOAS.setComponents(fhirOASBaseStructure.getComponents());
+        // Clone the base components to avoid shared reference issues
+        Components clonedComponents = cloneBaseComponents();
+        resourceOAS.setComponents(clonedComponents);
         apiDefinition.setOpenAPI(resourceOAS);
+
+        // Replace <ResourceType> placeholder in security schemes
+        replaceResourceTypeInSecuritySchemes(resourceOAS.getComponents(), apiDefinition.getResourceType());
+
         populateOASPaths(apiDefinition);
         populateOASInfo(apiDefinition);
         populateOASInternalValues(apiDefinition);

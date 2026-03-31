@@ -18,11 +18,11 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.oas;
 
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
-import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
@@ -32,21 +32,22 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.FHIRTool;
 import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.model.APIDefinition;
-import org.wso2.healthcare.codegen.tool.framework.fhir.core.oas.OASGenUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class generates OAS definitions for FHIR resources.
@@ -89,6 +90,200 @@ public class OASGenerator {
     }
 
     /**
+     * Creates a deep copy of the base Components for resource-specific modifications.
+     * This ensures that security scheme modifications don't affect other resources.
+     *
+     * @return A new Components instance with copied security schemes
+     */
+    protected Components cloneBaseComponents() {
+        Components originalComponents = fhirOASBaseStructure.getComponents();
+        if (originalComponents == null) {
+            return new Components();
+        }
+
+        Components clonedComponents = new Components();
+
+        // Copy parameters (these are shared and don't need resource-specific values)
+        if (originalComponents.getParameters() != null) {
+            clonedComponents.setParameters(originalComponents.getParameters());
+        }
+
+        // Copy schemas (these are shared and don't need resource-specific values)
+        if (originalComponents.getSchemas() != null) {
+            clonedComponents.setSchemas(originalComponents.getSchemas());
+        }
+
+        // Clone security schemes (these need resource-specific values)
+        if (originalComponents.getSecuritySchemes() != null) {
+            Map<String, SecurityScheme> clonedSecuritySchemes = new HashMap<>();
+            for (Map.Entry<String, SecurityScheme> entry : originalComponents.getSecuritySchemes().entrySet()) {
+                SecurityScheme originalScheme = entry.getValue();
+                SecurityScheme clonedScheme = new SecurityScheme();
+                clonedScheme.setType(originalScheme.getType());
+                clonedScheme.setDescription(originalScheme.getDescription());
+                clonedScheme.setName(originalScheme.getName());
+                clonedScheme.setIn(originalScheme.getIn());
+                clonedScheme.setScheme(originalScheme.getScheme());
+                clonedScheme.setBearerFormat(originalScheme.getBearerFormat());
+                clonedScheme.setOpenIdConnectUrl(originalScheme.getOpenIdConnectUrl());
+
+                // Clone OAuth flows
+                if (originalScheme.getFlows() != null) {
+                    OAuthFlows clonedFlows = new OAuthFlows();
+                    if (originalScheme.getFlows().getAuthorizationCode() != null) {
+                        clonedFlows.setAuthorizationCode(cloneOAuthFlow(originalScheme.getFlows().getAuthorizationCode()));
+                    }
+                    if (originalScheme.getFlows().getImplicit() != null) {
+                        clonedFlows.setImplicit(cloneOAuthFlow(originalScheme.getFlows().getImplicit()));
+                    }
+                    if (originalScheme.getFlows().getPassword() != null) {
+                        clonedFlows.setPassword(cloneOAuthFlow(originalScheme.getFlows().getPassword()));
+                    }
+                    if (originalScheme.getFlows().getClientCredentials() != null) {
+                        clonedFlows.setClientCredentials(cloneOAuthFlow(originalScheme.getFlows().getClientCredentials()));
+                    }
+                    clonedScheme.setFlows(clonedFlows);
+                }
+
+                clonedSecuritySchemes.put(entry.getKey(), clonedScheme);
+            }
+            clonedComponents.setSecuritySchemes(clonedSecuritySchemes);
+        }
+
+        // Copy request bodies (these are shared)
+        if (originalComponents.getRequestBodies() != null) {
+            clonedComponents.setRequestBodies(originalComponents.getRequestBodies());
+        }
+
+        return clonedComponents;
+    }
+
+    /**
+     * Creates a deep copy of an OAuthFlow object.
+     *
+     * @param original The original OAuthFlow to clone
+     * @return A new OAuthFlow instance with copied values
+     */
+    private OAuthFlow cloneOAuthFlow(OAuthFlow original) {
+        if (original == null) {
+            return null;
+        }
+
+        OAuthFlow cloned = new OAuthFlow();
+        cloned.setAuthorizationUrl(original.getAuthorizationUrl());
+        cloned.setTokenUrl(original.getTokenUrl());
+        cloned.setRefreshUrl(original.getRefreshUrl());
+
+        // Clone scopes
+        if (original.getScopes() != null) {
+            Scopes clonedScopes = new Scopes();
+            for (Map.Entry<String, String> scopeEntry : original.getScopes().entrySet()) {
+                clonedScopes.addString(scopeEntry.getKey(), scopeEntry.getValue());
+            }
+            cloned.setScopes(clonedScopes);
+        }
+
+        // Clone extensions
+        if (original.getExtensions() != null) {
+            Map<String, Object> clonedExtensions = new HashMap<>();
+            for (Map.Entry<String, Object> extEntry : original.getExtensions().entrySet()) {
+                if (extEntry.getValue() instanceof Map) {
+                    Map<String, Object> clonedMap = new LinkedHashMap<>((Map<String, Object>) extEntry.getValue());
+                    clonedExtensions.put(extEntry.getKey(), clonedMap);
+                } else {
+                    clonedExtensions.put(extEntry.getKey(), extEntry.getValue());
+                }
+            }
+            cloned.setExtensions(clonedExtensions);
+        }
+
+        return cloned;
+    }
+
+    /**
+     * Replaces the &lt;ResourceType&gt; placeholder in security schemes with the actual resource type.
+     *
+     * @param components Components object containing security schemes
+     * @param resourceType The FHIR resource type (e.g., Patient, Observation)
+     */
+    protected void replaceResourceTypeInSecuritySchemes(Components components, String resourceType) {
+        if (components == null || components.getSecuritySchemes() == null) {
+            return;
+        }
+
+        for (Map.Entry<String, SecurityScheme> schemeEntry : components.getSecuritySchemes().entrySet()) {
+            SecurityScheme securityScheme = schemeEntry.getValue();
+            if (securityScheme.getFlows() != null) {
+                OAuthFlows flows = securityScheme.getFlows();
+
+                // Handle AuthorizationCode flow
+                if (flows.getAuthorizationCode() != null) {
+                    replaceResourceTypeInOAuthFlow(flows.getAuthorizationCode(), resourceType);
+                }
+
+                // Handle Implicit flow
+                if (flows.getImplicit() != null) {
+                    replaceResourceTypeInOAuthFlow(flows.getImplicit(), resourceType);
+                }
+
+                // Handle Password flow
+                if (flows.getPassword() != null) {
+                    replaceResourceTypeInOAuthFlow(flows.getPassword(), resourceType);
+                }
+
+                // Handle ClientCredentials flow
+                if (flows.getClientCredentials() != null) {
+                    replaceResourceTypeInOAuthFlow(flows.getClientCredentials(), resourceType);
+                }
+            }
+        }
+    }
+
+    /**
+     * Replaces the &lt;ResourceType&gt; placeholder in an OAuth flow's scopes and extensions.
+     *
+     * @param flow OAuth flow object
+     * @param resourceType The FHIR resource type
+     */
+    private void replaceResourceTypeInOAuthFlow(OAuthFlow flow, String resourceType) {
+        if (flow == null) {
+            return;
+        }
+
+        // Replace in scopes
+        if (flow.getScopes() != null) {
+            Scopes updatedScopes = new Scopes();
+            for (Map.Entry<String, String> scopeEntry : flow.getScopes().entrySet()) {
+                String scopeKey = scopeEntry.getKey().replace("<ResourceType>", resourceType);
+                String scopeValue = scopeEntry.getValue().replace("<ResourceType>", resourceType);
+                updatedScopes.addString(scopeKey, scopeValue);
+            }
+            flow.setScopes(updatedScopes);
+        }
+
+        // Replace in extensions (for x-scopes-bindings)
+        if (flow.getExtensions() != null) {
+            Map<String, Object> updatedExtensions = new HashMap<>();
+            for (Map.Entry<String, Object> extensionEntry : flow.getExtensions().entrySet()) {
+                String extensionKey = extensionEntry.getKey();
+                Object extensionValue = extensionEntry.getValue();
+
+                if (extensionValue instanceof Map) {
+                    Map<String, Object> bindingsMap = new LinkedHashMap<>();
+                    for (Map.Entry<String, Object> bindingEntry : ((Map<String, Object>) extensionValue).entrySet()) {
+                        String bindingKey = bindingEntry.getKey().replace("<ResourceType>", resourceType);
+                        bindingsMap.put(bindingKey, bindingEntry.getValue());
+                    }
+                    updatedExtensions.put(extensionKey, bindingsMap);
+                } else {
+                    updatedExtensions.put(extensionKey, extensionValue);
+                }
+            }
+            flow.setExtensions(updatedExtensions);
+        }
+    }
+
+    /**
      * Populates OAS info object.
      *
      * @param apiDefinition API definition object
@@ -110,6 +305,35 @@ public class OASGenerator {
         contact.setEmail("user@email.com");
         info.setContact(contact);
         apiDefinition.getOpenAPI().setInfo(info);
+    }
+
+    /**
+     * Generates security scopes for a specific operation type.
+     * Includes both resource-specific scopes and wildcard scopes.
+     *
+     * @param resourceType The FHIR resource type
+     * @param operationType The operation type (read, create, update, delete, search)
+     * @return SecurityRequirement with appropriate scopes
+     */
+    protected SecurityRequirement generateSecurityScopes(String resourceType, String operationType) {
+        List<String> scopes = new ArrayList<>();
+        String scopeSuffix = switch (operationType) {
+            case "create" -> ".c";
+            case "update", "patch" -> ".u";
+            case "delete" -> ".d";
+            case "search" -> ".s";
+            default -> ".r";
+        };
+
+        // Add resource-specific scopes
+        scopes.add("patient/" + resourceType + scopeSuffix);
+        scopes.add("patient/*" + scopeSuffix);
+        scopes.add("user/" + resourceType + scopeSuffix);
+        scopes.add("user/*" + scopeSuffix);
+        scopes.add("system/" + resourceType + scopeSuffix);
+        scopes.add("system/*" + scopeSuffix);
+
+        return new SecurityRequirement().addList("default", scopes);
     }
 
     /**
@@ -139,7 +363,8 @@ public class OASGenerator {
                 case "read":
                     operation.addTagsItem(interaction.getValue());
                     operation.addTagsItem(apiDefinition.getResourceType());
-                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addSecurityItem(generateSecurityScopes(
+                            apiDefinition.getResourceType(), "read"));
                     operation.addExtension("x-auth-type", "Application & Application User");
 
                     ApiResponses getResponses = new ApiResponses();
@@ -163,7 +388,8 @@ public class OASGenerator {
                 case "search":
                     operation.addTagsItem(interaction.getValue());
                     operation.addTagsItem(apiDefinition.getResourceType());
-                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addSecurityItem(generateSecurityScopes(
+                            apiDefinition.getResourceType(), "search"));
                     operation.addExtension("x-auth-type", "Application & Application User");
 
                     ApiResponses searchResponses = new ApiResponses();
@@ -187,7 +413,7 @@ public class OASGenerator {
                 case "create":
                     operation.addTagsItem(interaction.getValue());
                     operation.addTagsItem(apiDefinition.getResourceType());
-                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addSecurityItem(generateSecurityScopes(apiDefinition.getResourceType(), "create"));
                     operation.addExtension("x-auth-type", "Application & Application User");
 
                     ApiResponses postResponses = new ApiResponses();
@@ -204,7 +430,8 @@ public class OASGenerator {
                 case "update":
                     operation.addTagsItem(interaction.getValue());
                     operation.addTagsItem(apiDefinition.getResourceType());
-                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addSecurityItem(generateSecurityScopes(
+                            apiDefinition.getResourceType(), "update"));
                     operation.addExtension("x-auth-type", "Application & Application User");
 
                     ApiResponses putResponses = new ApiResponses();
@@ -224,7 +451,8 @@ public class OASGenerator {
                 case "patch":
                     operation.addTagsItem(interaction.getValue());
                     operation.addTagsItem(apiDefinition.getResourceType());
-                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addSecurityItem(generateSecurityScopes(
+                            apiDefinition.getResourceType(), "patch"));
                     operation.addExtension("x-auth-type", "Application & Application User");
 
                     ApiResponses patchResponses = new ApiResponses();
@@ -243,7 +471,8 @@ public class OASGenerator {
                 case "delete":
                     operation.addTagsItem(interaction.getValue());
                     operation.addTagsItem(apiDefinition.getResourceType());
-                    operation.addSecurityItem(new SecurityRequirement().addList("default", new ArrayList<>()));
+                    operation.addSecurityItem(generateSecurityScopes(
+                            apiDefinition.getResourceType(), "delete"));
                     operation.addExtension("x-auth-type", "Application & Application User");
 
                     ApiResponses deleteResponses = new ApiResponses();

@@ -18,13 +18,14 @@
 
 package org.wso2.healthcare.codegen.tool.framework.fhir.core.versions.r5.oas;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
-import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.text.CaseUtils;
 import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.SearchParameter;
@@ -63,8 +64,14 @@ public class R5OASGenerator extends OASGenerator {
     public OpenAPI generateResourceSchema(APIDefinition apiDefinition, StructureDefinition structureDefinition) throws CodeGenException {
         OpenAPI resourceOAS = new OpenAPI();
 
-        resourceOAS.setComponents(fhirOASBaseStructure.getComponents());
+        // Clone the base components to avoid shared reference issues
+        Components clonedComponents = cloneBaseComponents();
+        resourceOAS.setComponents(clonedComponents);
         apiDefinition.setOpenAPI(resourceOAS);
+
+        // Replace <ResourceType> placeholder in security schemes
+        replaceResourceTypeInSecuritySchemes(resourceOAS.getComponents(), apiDefinition.getResourceType());
+
         populateOASPaths(apiDefinition);
         populateOASInfo(apiDefinition);
         populateOASInternalValues(apiDefinition);
