@@ -28,7 +28,8 @@ jobs:
       - name: Checkout release tag
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+          # Fully qualified, so a branch that happens to share the tag's name can never be checked out instead.
+          ref: refs/tags/${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
 
       # Writes a settings.xml with a `github` server authenticated as the workflow's GITHUB_TOKEN, which can
       # publish packages to this repository.
