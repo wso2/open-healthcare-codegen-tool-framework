@@ -116,4 +116,17 @@
         <module>components/hl7-core</module>
     </modules>
 
+    <!--
+      Released versions are published to this repository's GitHub Packages Maven registry by
+      .github/workflows/publish.yml, so consumers such as ballerina-platform/fhir-tools can resolve them without
+      building this repository locally. Reading needs a GitHub token with read:packages, even for public packages.
+    -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/wso2/open-healthcare-codegen-tool-framework</url>
+        </repository>
+    </distributionManagement>
+
 </project>

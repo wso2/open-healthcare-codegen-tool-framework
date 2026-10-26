@@ -1,0 +1,49 @@
+name: Publish to GitHub Packages
+
+# Publishes the framework jars (and the parent pom consumers need to resolve them) to this repository's GitHub
+# Packages Maven registry, so downstream builds such as ballerina-platform/fhir-tools can depend on a released
+# version without building this repository locally first.
+#
+# Always publishes from a release tag, never from a branch: a branch can carry unreleased commits under an already
+# released version number. Runs automatically when a GitHub release is published, and can be run manually for an
+# existing tag (e.g. to publish a version released before this workflow existed).
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish (e.g. v2.1.2)
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+
+      # Writes a settings.xml with a `github` server authenticated as the workflow's GITHUB_TOKEN, which can
+      # publish packages to this repository.
+      - name: Setup Java and Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github
+
+      # The target is passed on the command line as well as declared in the pom's distributionManagement, so tags
+      # cut before the pom declared it can still be published.
+      - name: Publish
+        run: >
+          mvn -B deploy
+          -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
